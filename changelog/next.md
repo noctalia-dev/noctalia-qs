@@ -48,6 +48,7 @@ set shell id.
 - Fixed memory leak in IPC handlers.
 - Fixed ClippingRectangle related crashes.
 - Fixed crashes when monitors are unplugged.
+- Fixed crashes when default pipewire devices are lost.
 
 ## Packaging Changes
 
