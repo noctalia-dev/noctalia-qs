@@ -23,4 +23,4 @@ target_link_libraries(quickshell-hyprland-focus-grab PRIVATE
 
 qs_module_pch(quickshell-hyprland-focus-grab SET large)
 
-target_link_libraries(quickshell PRIVATE quickshell-hyprland-focus-grabplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-hyprland-focus-grabplugin)

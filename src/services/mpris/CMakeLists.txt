@@ -42,4 +42,4 @@ qs_add_link_dependencies(quickshell-service-mpris quickshell-dbus)
 
 qs_module_pch(quickshell-service-mpris SET dbus)
 
-target_link_libraries(quickshell PRIVATE quickshell-service-mprisplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-service-mprisplugin)

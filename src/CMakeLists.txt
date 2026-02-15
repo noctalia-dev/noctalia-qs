@@ -1,6 +1,6 @@
-qt_add_executable(quickshell main.cpp)
+qt_add_executable(noctalia-qs main.cpp)
 
-install(TARGETS quickshell RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS noctalia-qs RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 add_subdirectory(build)
 add_subdirectory(launch)

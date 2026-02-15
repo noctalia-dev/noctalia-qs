@@ -21,4 +21,4 @@ target_link_libraries(quickshell-i3-ipc PRIVATE Qt::Quick)
 
 qs_module_pch(quickshell-i3-ipc SET large)
 
-target_link_libraries(quickshell PRIVATE quickshell-i3-ipcplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-i3-ipcplugin)

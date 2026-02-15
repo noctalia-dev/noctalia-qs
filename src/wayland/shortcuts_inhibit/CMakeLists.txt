@@ -22,4 +22,4 @@ target_link_libraries(quickshell-wayland-shortcuts-inhibit PRIVATE
 
 qs_module_pch(quickshell-wayland-shortcuts-inhibit SET large)
 
-target_link_libraries(quickshell PRIVATE quickshell-wayland-shortcuts-inhibitplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-wayland-shortcuts-inhibitplugin)

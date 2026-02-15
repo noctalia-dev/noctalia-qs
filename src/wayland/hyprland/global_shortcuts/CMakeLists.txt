@@ -22,4 +22,4 @@ target_link_libraries(quickshell-hyprland-global-shortcuts PRIVATE
 
 qs_module_pch(quickshell-hyprland-global-shortcuts)
 
-target_link_libraries(quickshell PRIVATE quickshell-hyprland-global-shortcutsplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-hyprland-global-shortcutsplugin)

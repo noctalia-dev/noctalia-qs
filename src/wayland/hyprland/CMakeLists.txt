@@ -35,4 +35,4 @@ install_qml_module(quickshell-hyprland)
 
 # intentionally no pch as the module is empty
 
-target_link_libraries(quickshell PRIVATE quickshell-hyprlandplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-hyprlandplugin)

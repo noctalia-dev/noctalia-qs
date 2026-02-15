@@ -155,15 +155,8 @@ if (USE_JEMALLOC)
 	find_package(PkgConfig REQUIRED)
 	# IMPORTED_TARGET not working for some reason
 	pkg_check_modules(JEMALLOC REQUIRED jemalloc)
-	target_link_libraries(quickshell PRIVATE ${JEMALLOC_LIBRARIES})
+	target_link_libraries(noctalia-qs PRIVATE ${JEMALLOC_LIBRARIES})
 endif()
-
-install(CODE "
-	execute_process(
-		COMMAND ${CMAKE_COMMAND} -E create_symlink \
-		${CMAKE_INSTALL_FULL_BINDIR}/quickshell \$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/qs
-	)
-")
 
 install(
 	FILES ${CMAKE_SOURCE_DIR}/assets/org.quickshell.desktop
