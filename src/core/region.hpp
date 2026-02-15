@@ -45,6 +45,27 @@ Q_ENUM_NS(Enum);
 
 } // namespace Intersection
 
+///! Corner state for Region radius.
+/// See @@Region.topLeftCorner, @@Region.topRightCorner,
+/// @@Region.bottomLeftCorner, @@Region.bottomRightCorner.
+namespace CornerState { // NOLINT
+Q_NAMESPACE;
+QML_ELEMENT;
+
+enum Enum : qint8 {
+	/// No radius applied (square corner).
+	Flat = -1,
+	/// Standard inward arc.
+	Normal = 0,
+	/// Outward arc extending horizontally beyond the region boundary.
+	InvertX = 1,
+	/// Outward arc extending vertically beyond the region boundary.
+	InvertY = 2,
+};
+Q_ENUM_NS(Enum);
+
+} // namespace CornerState
+
 ///! A composable region used as a mask.
 /// See @@QsWindow.mask.
 class PendingRegion: public QObject {
@@ -66,6 +87,19 @@ class PendingRegion: public QObject {
 	Q_PROPERTY(qint32 width MEMBER mWidth NOTIFY widthChanged);
 	/// Defaults to 0. Does nothing if @@item is set.
 	Q_PROPERTY(qint32 height MEMBER mHeight NOTIFY heightChanged);
+
+	/// Corner radius for rounded rectangles. Only applies when @@shape is `Rect`. Defaults to 0.
+	Q_PROPERTY(qint32 radius MEMBER mRadius NOTIFY radiusChanged);
+
+	/// Corner state for the top-left corner. Defaults to `Normal`.
+	/// See @@CornerState for possible values.
+	Q_PROPERTY(CornerState::Enum topLeftCorner MEMBER mTopLeftCorner NOTIFY topLeftCornerChanged);
+	/// Corner state for the top-right corner. Defaults to `Normal`.
+	Q_PROPERTY(CornerState::Enum topRightCorner MEMBER mTopRightCorner NOTIFY topRightCornerChanged);
+	/// Corner state for the bottom-left corner. Defaults to `Normal`.
+	Q_PROPERTY(CornerState::Enum bottomLeftCorner MEMBER mBottomLeftCorner NOTIFY bottomLeftCornerChanged);
+	/// Corner state for the bottom-right corner. Defaults to `Normal`.
+	Q_PROPERTY(CornerState::Enum bottomRightCorner MEMBER mBottomRightCorner NOTIFY bottomRightCornerChanged);
 
 	/// Regions to apply on top of this region.
 	///
@@ -109,6 +143,11 @@ signals:
 	void yChanged();
 	void widthChanged();
 	void heightChanged();
+	void radiusChanged();
+	void topLeftCornerChanged();
+	void topRightCornerChanged();
+	void bottomLeftCornerChanged();
+	void bottomRightCornerChanged();
 	void childrenChanged();
 
 	/// Triggered when the region's geometry changes.
@@ -136,6 +175,12 @@ private:
 	qint32 mY = 0;
 	qint32 mWidth = 0;
 	qint32 mHeight = 0;
+	qint32 mRadius = 0;
+
+	CornerState::Enum mTopLeftCorner = CornerState::Normal;
+	CornerState::Enum mTopRightCorner = CornerState::Normal;
+	CornerState::Enum mBottomLeftCorner = CornerState::Normal;
+	CornerState::Enum mBottomRightCorner = CornerState::Normal;
 
 	QList<PendingRegion*> mRegions;
 };

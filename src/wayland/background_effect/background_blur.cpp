@@ -58,14 +58,33 @@ BackgroundBlur::~BackgroundBlur()
 {
     detach();
     disconnect(m_managerActiveConn);
+    disconnect(m_regionChangedConn);
+    disconnect(m_regionDestroyedConn);
 }
 
-void BackgroundBlur::setRegions(const QList<QRectF> &regions)
+void BackgroundBlur::setBlurRegion(PendingRegion *region)
 {
-    if (m_regions == regions)
+    if (region == m_blurRegion)
         return;
-    m_regions = regions;
-    Q_EMIT regionsChanged();
+
+    if (m_blurRegion) {
+        disconnect(m_regionChangedConn);
+        disconnect(m_regionDestroyedConn);
+    }
+
+    m_blurRegion = region;
+
+    if (region) {
+        m_regionChangedConn = connect(region, &PendingRegion::changed,
+                                      this, &BackgroundBlur::updateBlurRegion);
+        m_regionDestroyedConn = connect(region, &QObject::destroyed, this, [this]() {
+            m_blurRegion = nullptr;
+            updateBlurRegion();
+            Q_EMIT blurRegionChanged();
+        });
+    }
+
+    Q_EMIT blurRegionChanged();
     updateBlurRegion();
 }
 
@@ -145,21 +164,25 @@ void BackgroundBlur::updateBlurRegion()
     if (!m_effect)
         return;
 
-    if (m_regions.isEmpty()) {
+    if (!m_blurRegion) {
         m_effect->set_blur_region(nullptr);
     } else {
-        auto *compositor = ensureCompositor();
-        if (!compositor)
-            return;
+        QRegion qregion = m_blurRegion->build();
 
-        auto *region = wl_compositor_create_region(compositor);
-        for (const auto &rect : m_regions) {
-            wl_region_add(region,
-                          qRound(rect.x()), qRound(rect.y()),
-                          qRound(rect.width()), qRound(rect.height()));
+        if (qregion.isEmpty()) {
+            m_effect->set_blur_region(nullptr);
+        } else {
+            auto *compositor = ensureCompositor();
+            if (!compositor)
+                return;
+
+            auto *wlRegion = wl_compositor_create_region(compositor);
+            for (const QRect &rect : qregion) {
+                wl_region_add(wlRegion, rect.x(), rect.y(), rect.width(), rect.height());
+            }
+            m_effect->set_blur_region(wlRegion);
+            wl_region_destroy(wlRegion);
         }
-        m_effect->set_blur_region(region);
-        wl_region_destroy(region);
     }
 
     if (auto *w = window())
