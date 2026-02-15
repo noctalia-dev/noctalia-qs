@@ -26,6 +26,6 @@ qs_add_module_deps_light(quickshell-service-notifications Quickshell)
 install_qml_module(quickshell-service-notifications)
 
 target_link_libraries(quickshell-service-notifications PRIVATE Qt::Quick Qt::DBus)
-target_link_libraries(quickshell PRIVATE quickshell-service-notificationsplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-service-notificationsplugin)
 
 qs_module_pch(quickshell-service-notifications SET dbus)

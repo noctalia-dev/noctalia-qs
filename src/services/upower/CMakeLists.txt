@@ -40,6 +40,6 @@ install_qml_module(quickshell-service-upower)
 
 target_link_libraries(quickshell-service-upower PRIVATE Qt::Qml Qt::DBus)
 qs_add_link_dependencies(quickshell-service-upower quickshell-dbus)
-target_link_libraries(quickshell PRIVATE quickshell-service-upowerplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-service-upowerplugin)
 
 qs_module_pch(quickshell-service-upower SET dbus)

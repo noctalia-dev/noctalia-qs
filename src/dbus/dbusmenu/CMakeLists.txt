@@ -32,4 +32,4 @@ qs_add_link_dependencies(quickshell-dbusmenu quickshell-dbus)
 
 qs_module_pch(quickshell-dbusmenu SET dbus)
 
-target_link_libraries(quickshell PRIVATE quickshell-dbusmenuplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-dbusmenuplugin)

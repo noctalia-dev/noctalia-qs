@@ -22,4 +22,4 @@ target_link_libraries(quickshell-wayland-idle-inhibit PRIVATE
 
 qs_module_pch(quickshell-wayland-idle-inhibit SET large)
 
-target_link_libraries(quickshell PRIVATE quickshell-wayland-idle-inhibitplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-wayland-idle-inhibitplugin)

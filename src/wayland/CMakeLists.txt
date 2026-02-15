@@ -143,4 +143,4 @@ install_qml_module(quickshell-wayland)
 
 qs_module_pch(quickshell-wayland SET large)
 
-target_link_libraries(quickshell PRIVATE quickshell-waylandplugin quickshell-wayland-init)
+target_link_libraries(noctalia-qs PRIVATE quickshell-waylandplugin quickshell-wayland-init)

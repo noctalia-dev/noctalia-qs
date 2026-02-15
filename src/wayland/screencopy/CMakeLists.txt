@@ -39,4 +39,4 @@ target_link_libraries(quickshell-wayland-screencopy PRIVATE
 
 qs_module_pch(quickshell-wayland-screencopy SET large)
 
-target_link_libraries(quickshell PRIVATE quickshell-wayland-screencopyplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-wayland-screencopyplugin)

@@ -20,4 +20,4 @@ qs_add_pchset(launch
 
 qs_pch(quickshell-launch SET launch)
 
-target_link_libraries(quickshell PRIVATE quickshell-launch)
+target_link_libraries(noctalia-qs PRIVATE quickshell-launch)

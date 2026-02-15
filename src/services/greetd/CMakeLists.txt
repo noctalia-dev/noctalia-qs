@@ -16,4 +16,4 @@ target_link_libraries(quickshell-service-greetd PRIVATE Qt::Quick)
 
 qs_module_pch(quickshell-service-greetd)
 
-target_link_libraries(quickshell PRIVATE quickshell-service-greetdplugin)
+target_link_libraries(noctalia-qs PRIVATE quickshell-service-greetdplugin)

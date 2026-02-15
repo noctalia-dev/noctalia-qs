@@ -6,4 +6,4 @@ qs_pch(quickshell-ipc)
 
 target_link_libraries(quickshell-ipc PRIVATE Qt::Quick Qt::Network)
 
-target_link_libraries(quickshell PRIVATE quickshell-ipc)
+target_link_libraries(noctalia-qs PRIVATE quickshell-ipc)
