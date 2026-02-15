@@ -5,6 +5,7 @@
 # build files
 /result
 /build/
+/build-release/
 /compile_commands.json
 
 # clangd
