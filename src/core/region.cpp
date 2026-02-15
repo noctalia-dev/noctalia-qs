@@ -1,4 +1,5 @@
 #include "region.hpp"
+#include <algorithm>
 #include <cmath>
 
 #include <qobject.h>
@@ -18,6 +19,11 @@ PendingRegion::PendingRegion(QObject* parent): QObject(parent) {
 	QObject::connect(this, &PendingRegion::yChanged, this, &PendingRegion::changed);
 	QObject::connect(this, &PendingRegion::widthChanged, this, &PendingRegion::changed);
 	QObject::connect(this, &PendingRegion::heightChanged, this, &PendingRegion::changed);
+	QObject::connect(this, &PendingRegion::radiusChanged, this, &PendingRegion::changed);
+	QObject::connect(this, &PendingRegion::topLeftCornerChanged, this, &PendingRegion::changed);
+	QObject::connect(this, &PendingRegion::topRightCornerChanged, this, &PendingRegion::changed);
+	QObject::connect(this, &PendingRegion::bottomLeftCornerChanged, this, &PendingRegion::changed);
+	QObject::connect(this, &PendingRegion::bottomRightCornerChanged, this, &PendingRegion::changed);
 	QObject::connect(this, &PendingRegion::childrenChanged, this, &PendingRegion::changed);
 }
 
@@ -88,6 +94,74 @@ QRegion PendingRegion::build() const {
 		);
 	} else {
 		region = QRegion(this->mX, this->mY, this->mWidth, this->mHeight, type);
+	}
+
+	if (this->mShape == RegionShape::Rect && this->mRadius > 0 && !region.isEmpty()) {
+		auto rect = region.boundingRect();
+		auto x = rect.x();
+		auto y = rect.y();
+		auto w = rect.width();
+		auto h = rect.height();
+		auto r = std::min(this->mRadius, std::min(w, h) / 2);
+
+		// Concave width at distance d from the base of the corner arc.
+		// At d=0 (base, rect edge): width = r. At d=r (tip): width = 0.
+		// Used for both Normal cuts (subtract from inside) and Inverted extensions (add outside).
+		auto cornerWidth = [](int r, int d) -> int {
+			auto dd = static_cast<double>(r - d);
+			return r
+			    - static_cast<int>(std::round(std::sqrt(static_cast<double>(r) * r - dd * dd)));
+		};
+
+		for (int i = 0; i < r; i++) {
+			// Top-left corner
+			if (this->mTopLeftCorner == CornerState::Normal) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region -= QRegion(x, y + i, cw, 1);
+			} else if (this->mTopLeftCorner == CornerState::InvertX) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region += QRegion(x - cw, y + i, cw, 1);
+			} else if (this->mTopLeftCorner == CornerState::InvertY) {
+				auto cw = cornerWidth(r, r - i);
+				if (cw > 0) region += QRegion(x, y - r + i, cw, 1);
+			}
+
+			// Top-right corner
+			if (this->mTopRightCorner == CornerState::Normal) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region -= QRegion(x + w - cw, y + i, cw, 1);
+			} else if (this->mTopRightCorner == CornerState::InvertX) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region += QRegion(x + w, y + i, cw, 1);
+			} else if (this->mTopRightCorner == CornerState::InvertY) {
+				auto cw = cornerWidth(r, r - i);
+				if (cw > 0) region += QRegion(x + w - cw, y - r + i, cw, 1);
+			}
+
+			// Bottom-left corner
+			if (this->mBottomLeftCorner == CornerState::Normal) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region -= QRegion(x, y + h - 1 - i, cw, 1);
+			} else if (this->mBottomLeftCorner == CornerState::InvertX) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region += QRegion(x - cw, y + h - 1 - i, cw, 1);
+			} else if (this->mBottomLeftCorner == CornerState::InvertY) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region += QRegion(x, y + h + i, cw, 1);
+			}
+
+			// Bottom-right corner
+			if (this->mBottomRightCorner == CornerState::Normal) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region -= QRegion(x + w - cw, y + h - 1 - i, cw, 1);
+			} else if (this->mBottomRightCorner == CornerState::InvertX) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region += QRegion(x + w, y + h - 1 - i, cw, 1);
+			} else if (this->mBottomRightCorner == CornerState::InvertY) {
+				auto cw = cornerWidth(r, i);
+				if (cw > 0) region += QRegion(x + w - cw, y + h + i, cw, 1);
+			}
+		}
 	}
 
 	for (const auto& childRegion: this->mRegions) {
