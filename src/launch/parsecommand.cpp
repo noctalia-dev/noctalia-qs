@@ -139,8 +139,8 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		cli->add_flag("-V,--version", state.misc.printVersion)
 		    ->description("Print quickshell's version and exit.");
 
-		cli->add_flag("-n,--no-duplicate", state.misc.noDuplicate)
-		    ->description("Exit immediately if another instance of the given config is running.");
+		cli->add_flag("-n,--no-duplicate{true},!--allow-duplicate{false}", state.misc.noDuplicate)
+		    ->description("Exit immediately if another instance of the given config is running.\nEnabled by default. Use --allow-duplicate to disable.");
 
 		cli->add_flag("-d,--daemonize", state.misc.daemonize)
 		    ->description("Detach from the controlling terminal.");
