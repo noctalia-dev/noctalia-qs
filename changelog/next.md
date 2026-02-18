@@ -46,6 +46,7 @@ set shell id.
 - Fixed asynchronous loaders not working before window creation.
 - Fixed memory leak in IPC handlers.
 - Fixed ClippingRectangle related crashes.
+- Fixed crashes when monitors are unplugged.
 
 ## Packaging Changes
 
