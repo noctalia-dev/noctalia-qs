@@ -21,17 +21,17 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		auto* group =
 		    cmd->add_option_group("Config Selection")
 		        ->description(
-		            "Quickshell detects configurations as named directories under each XDG config "
+		            "noctalia-qs detects configurations as named directories under each XDG config "
 		            "directory as `<xdg dir>/quickshell/<config name>/shell.qml`.\n\n"
 		            "If `<xdg dir>/quickshell/shell.qml` exists, it will be registered as the "
 		            "'default' configuration, and no subdirectories will be considered. "
 		            "If --config is not passed, 'default' will be assumed.\n\n"
 		            "Alternatively, a config can be selected by path with --path.\n\n"
 		            "Examples:\n"
-		            "- `~/.config/quickshell/shell.qml` can be run with `qs`\n"
-		            "- `/etc/xdg/quickshell/myconfig/shell.qml` can be run with `qs -c myconfig`\n"
-		            "- `~/myshell/shell.qml` can be run with `qs -p ~/myshell`\n"
-		            "- `~/myshell/randomfile.qml` can be run with `qs -p ~/myshell/randomfile.qml`"
+		            "- `~/.config/quickshell/shell.qml` can be run with `noctalia-qs`\n"
+		            "- `/etc/xdg/quickshell/myconfig/shell.qml` can be run with `noctalia-qs -c myconfig`\n"
+		            "- `~/myshell/shell.qml` can be run with `noctalia-qs -p ~/myshell`\n"
+		            "- `~/myshell/randomfile.qml` can be run with `noctalia-qs -p ~/myshell/randomfile.qml`"
 		        );
 
 		auto* path = group->add_option("-p,--path", state.config.path)
@@ -39,13 +39,13 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		                 ->envname("QS_CONFIG_PATH");
 
 		group->add_option("-c,--config", state.config.name)
-		    ->description("Name of a quickshell configuration to run.")
+		    ->description("Name of a noctalia-qs configuration to run.")
 		    ->envname("QS_CONFIG_NAME")
 		    ->excludes(path);
 
 		group->add_option("-m,--manifest", state.config.manifest)
 		    ->description(
-		        "[DEPRECATED] Path to a quickshell manifest.\n"
+		        "[DEPRECATED] Path to a noctalia-qs manifest.\n"
 		        "If a manifest is specified, configs named by -c will point to its entries.\n"
 		        "Defaults to $XDG_CONFIG_HOME/quickshell/manifest.conf"
 		    )
@@ -137,7 +137,7 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		cli->add_option_group("")->add_flag("--private-check-compat", state.misc.checkCompat);
 
 		cli->add_flag("-V,--version", state.misc.printVersion)
-		    ->description("Print quickshell's version and exit.");
+		    ->description("Print noctalia-qs's version and exit.");
 
 		cli->add_flag("-n,--no-duplicate{true},!--allow-duplicate{false}", state.misc.noDuplicate)
 		    ->description("Exit immediately if another instance of the given config is running.\nEnabled by default. Use --allow-duplicate to disable.");
@@ -147,7 +147,7 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 	}
 
 	{
-		auto* sub = cli->add_subcommand("log", "Print quickshell logs.");
+		auto* sub = cli->add_subcommand("log", "Print noctalia-qs logs.");
 
 		auto* file = sub->add_option("file", state.log.file, "Log file to read.");
 
@@ -169,7 +169,7 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 	}
 
 	{
-		auto* sub = cli->add_subcommand("list", "List running quickshell instances.");
+		auto* sub = cli->add_subcommand("list", "List running noctalia-qs instances.");
 
 		auto* all = sub->add_flag("-a,--all", state.instance.all)
 		                ->description(
@@ -190,7 +190,7 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 	}
 
 	{
-		auto* sub = cli->add_subcommand("kill", "Kill quickshell instances.");
+		auto* sub = cli->add_subcommand("kill", "Kill noctalia-qs instances.");
 		//sub->add_flag("-a,--all", "Kill all matching instances instead of just one.");
 		auto* instance = addInstanceSelection(sub);
 		addConfigSelection(sub, true)->excludes(instance);
@@ -200,7 +200,7 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 	}
 
 	{
-		auto* sub = cli->add_subcommand("ipc", "Communicate with other Quickshell instances.")
+		auto* sub = cli->add_subcommand("ipc", "Communicate with other noctalia-qs instances.")
 		                ->require_subcommand();
 		state.ipc.ipc = sub;
 

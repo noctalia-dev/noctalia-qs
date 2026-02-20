@@ -159,12 +159,12 @@ if (USE_JEMALLOC)
 endif()
 
 install(
-	FILES ${CMAKE_SOURCE_DIR}/assets/org.quickshell.desktop
+	FILES ${CMAKE_SOURCE_DIR}/assets/dev.noctalia.noctalia-qs.desktop
 	DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
 )
 
 install(
-	FILES ${CMAKE_SOURCE_DIR}/assets/quickshell.svg
+	FILES ${CMAKE_SOURCE_DIR}/assets/noctalia-qs.svg
 	DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
-	RENAME org.quickshell.svg
+	RENAME dev.noctalia.noctalia-qs.svg
 )

@@ -92,7 +92,7 @@ int locateConfigFile(CommandState& cmd, QString& path) {
 			qWarning()
 			    << "Config manifests (manifest.conf) are deprecated and will be removed in a future "
 			       "release.";
-			qWarning() << "Consider using symlinks to a subfolder of quickshell's XDG config dirs.";
+			qWarning() << "Consider using symlinks to a subfolder of noctalia-qs's XDG config dirs.";
 
 			auto file = QFile(manifestPath);
 			if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -461,10 +461,10 @@ int runCommand(int argc, char** argv, QCoreApplication* coreApplication) {
 
 	if (state.misc.checkCompat) {
 		if (strcmp(qVersion(), QT_VERSION_STR) != 0) {
-			QTextStream(stdout) << "\033[31mCOMPATIBILITY WARNING: Quickshell was built against Qt "
+			QTextStream(stdout) << "\033[31mCOMPATIBILITY WARNING: noctalia-qs was built against Qt "
 			                    << QT_VERSION_STR << " but the system has updated to Qt " << qVersion()
 			                    << " without rebuilding the package. This is likely to cause crashes, so "
-			                       "you must rebuild the quickshell package.\n\033[0m";
+			                       "you must rebuild the noctalia-qs package.\n\033[0m";
 			return 1;
 		}
 
@@ -519,7 +519,7 @@ int runCommand(int argc, char** argv, QCoreApplication* coreApplication) {
 	}
 
 	if (state.misc.printVersion) {
-		qCInfo(logBare).noquote().nospace() << "quickshell " << QS_VERSION << ", revision "
+		qCInfo(logBare).noquote().nospace() << "noctalia-qs " << QS_VERSION << ", revision "
 		                                    << GIT_REVISION << ", distributed by: " << DISTRIBUTOR;
 
 		if (state.log.verbosity > 1) {
@@ -544,10 +544,10 @@ int runCommand(int argc, char** argv, QCoreApplication* coreApplication) {
 		return ipcCommand(state);
 	} else {
 		if (strcmp(qVersion(), QT_VERSION_STR) != 0) {
-			qWarning() << "\033[31mQuickshell was built against Qt" << QT_VERSION_STR
+			qWarning() << "\033[31mnoctalia-qs was built against Qt" << QT_VERSION_STR
 			           << "but the system has updated to Qt" << qVersion()
 			           << "without rebuilding the package. This is likely to cause crashes, so "
-			              "the quickshell package must be rebuilt.\n";
+			              "the noctalia-qs package must be rebuilt.\n";
 		}
 
 		return launchFromCommand(state, coreApplication);
