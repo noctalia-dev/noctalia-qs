@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(quickshell VERSION "0.2.1" LANGUAGES CXX C)
+project(quickshell VERSION "0.0.1" LANGUAGES CXX C)
 
 set(UNRELEASED_FEATURES)
 
@@ -50,7 +50,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
 	boption(CRASH_REPORTER "Crash Handling" OFF)
 	boption(USE_JEMALLOC "Use jemalloc" OFF)
 else()
-	boption(CRASH_REPORTER "Crash Handling" ON)
+	boption(CRASH_REPORTER "Crash Handling" OFF)
 	boption(USE_JEMALLOC "Use jemalloc" ON)
 endif()
 boption(SOCKETS "Unix Sockets" ON)

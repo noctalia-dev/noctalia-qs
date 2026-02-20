@@ -49,8 +49,8 @@
   withNetworkManager ? true,
 }: let
   unwrapped = stdenv.mkDerivation {
-    pname = "quickshell${lib.optionalString debug "-debug"}";
-    version = "0.2.1";
+    pname = "noctalia-qs${lib.optionalString debug "-debug"}";
+    version = "0.0.1";
     src = nix-gitignore.gitignoreSource "/default.nix\n" ./.;
 
     dontWrapQtApps = true; # see wrappers
@@ -114,7 +114,7 @@
       description = "Flexbile QtQuick based desktop shell toolkit";
       license = licenses.lgpl3Only;
       platforms = platforms.linux;
-      mainProgram = "quickshell";
+      mainProgram = "noctalia-qs";
     };
   };
 
