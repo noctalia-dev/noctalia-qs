@@ -97,9 +97,13 @@ class PendingRegion: public QObject {
 	/// Corner state for the top-right corner. Defaults to `Normal`.
 	Q_PROPERTY(CornerState::Enum topRightCorner MEMBER mTopRightCorner NOTIFY topRightCornerChanged);
 	/// Corner state for the bottom-left corner. Defaults to `Normal`.
-	Q_PROPERTY(CornerState::Enum bottomLeftCorner MEMBER mBottomLeftCorner NOTIFY bottomLeftCornerChanged);
+	Q_PROPERTY(
+	    CornerState::Enum bottomLeftCorner MEMBER mBottomLeftCorner NOTIFY bottomLeftCornerChanged
+	);
 	/// Corner state for the bottom-right corner. Defaults to `Normal`.
-	Q_PROPERTY(CornerState::Enum bottomRightCorner MEMBER mBottomRightCorner NOTIFY bottomRightCornerChanged);
+	Q_PROPERTY(
+	    CornerState::Enum bottomRightCorner MEMBER mBottomRightCorner NOTIFY bottomRightCornerChanged
+	);
 
 	/// Regions to apply on top of this region.
 	///

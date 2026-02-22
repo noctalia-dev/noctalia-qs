@@ -1,7 +1,7 @@
 #include <cstddef>
-#include <string>
 #include <limits>
 #include <memory>
+#include <string>
 #include <utility>
 
 #include <CLI/App.hpp>
@@ -117,8 +117,7 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 	};
 
 	state.app = std::make_unique<CLI::App>(
-	    std::string("noctalia-qs " QS_VERSION ", revision ")
-	    + std::string(GIT_REVISION).substr(0, 8)
+	    std::string("noctalia-qs " QS_VERSION ", revision ") + std::string(GIT_REVISION).substr(0, 8)
 	    + ", distributed by: " DISTRIBUTOR
 	);
 	auto* cli = state.app.get();
@@ -137,7 +136,10 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		    ->description("Print noctalia-qs's version and exit.");
 
 		cli->add_flag("-n,--no-duplicate{true},!--allow-duplicate{false}", state.misc.noDuplicate)
-		    ->description("Exit immediately if another instance of the given config is running.\nEnabled by default. Use --allow-duplicate to disable.");
+		    ->description(
+		        "Exit immediately if another instance of the given config is running.\nEnabled by "
+		        "default. Use --allow-duplicate to disable."
+		    );
 
 		cli->add_flag("-d,--daemonize", state.misc.daemonize)
 		    ->description("Detach from the controlling terminal.");

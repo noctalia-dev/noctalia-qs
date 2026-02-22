@@ -109,8 +109,7 @@ QRegion PendingRegion::build() const {
 		// Used for both Normal cuts (subtract from inside) and Inverted extensions (add outside).
 		auto cornerWidth = [](int r, int d) -> int {
 			auto dd = static_cast<double>(r - d);
-			return r
-			    - static_cast<int>(std::round(std::sqrt(static_cast<double>(r) * r - dd * dd)));
+			return r - static_cast<int>(std::round(std::sqrt(static_cast<double>(r) * r - dd * dd)));
 		};
 
 		for (int i = 0; i < r; i++) {
