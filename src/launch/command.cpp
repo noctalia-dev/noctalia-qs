@@ -81,67 +81,23 @@ int locateConfigFile(CommandState& cmd, QString& path) {
 	if (!cmd.config.path->isEmpty()) {
 		path = *cmd.config.path;
 	} else {
-		auto manifestPath = *cmd.config.manifest;
-		if (manifestPath.isEmpty()) {
-			auto configDir = QDir(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
-			auto path = configDir.filePath("manifest.conf");
-			if (QFileInfo(path).isFile()) manifestPath = path;
-		}
+		const auto& name = cmd.config.name->isEmpty() ? "default" : *cmd.config.name;
+		path = locateNamedConfig(name);
 
-		if (!manifestPath.isEmpty()) {
-			qWarning()
-			    << "Config manifests (manifest.conf) are deprecated and will be removed in a future "
-			       "release.";
-			qWarning() << "Consider using symlinks to a subfolder of noctalia-qs's XDG config dirs.";
-
-			auto file = QFile(manifestPath);
-			if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-				auto stream = QTextStream(&file);
-				while (!stream.atEnd()) {
-					auto line = stream.readLine();
-					if (line.trimmed().startsWith("#")) continue;
-					if (line.trimmed().isEmpty()) continue;
-
-					auto split = line.split('=');
-					if (split.length() != 2) {
-						qCritical() << "Manifest line not in expected format 'name = relativepath':" << line;
-						return -1;
-					}
-
-					if (split[0].trimmed() == *cmd.config.name) {
-						path = QDir(QFileInfo(file).absolutePath()).filePath(split[1].trimmed());
-						break;
-					}
-				}
-
-				if (path.isEmpty()) {
-					qCCritical(logBare) << "Configuration" << *cmd.config.name
-					                    << "not found when searching manifest" << manifestPath;
-					return -1;
-				}
+		if (path.isEmpty()) {
+			if (name == "default") {
+				qCCritical(
+				    logBare
+				) << "Could not find \"default\" config directory or shell.qml in any valid config path.";
 			} else {
-				qCCritical(logBare) << "Could not open maifest at path" << *cmd.config.manifest;
-				return -1;
-			}
-		} else {
-			const auto& name = cmd.config.name->isEmpty() ? "default" : *cmd.config.name;
-			path = locateNamedConfig(name);
-
-			if (path.isEmpty()) {
-				if (name == "default") {
-					qCCritical(
-					    logBare
-					) << "Could not find \"default\" config directory or shell.qml in any valid config path.";
-				} else {
-					qCCritical(logBare) << "Could not find" << name
-					                    << "config directory in any valid config path.";
-				}
-
-				return -1;
+				qCCritical(logBare) << "Could not find" << name
+				                    << "config directory in any valid config path.";
 			}
 
-			goto rpath;
+			return -1;
 		}
+
+		goto rpath;
 	}
 
 	if (QFileInfo(path).isDir()) {
@@ -407,7 +363,7 @@ int ipcCommand(CommandState& cmd) {
 	if (r != 0) return r;
 
 	return IpcClient::connect(instance.instance.instanceId, [&](IpcClient& client) {
-		if (*cmd.ipc.show || cmd.ipc.showOld) {
+		if (*cmd.ipc.show) {
 			return qs::io::ipc::comm::queryMetadata(&client, *cmd.ipc.target, *cmd.ipc.name);
 		} else if (*cmd.ipc.getprop) {
 			return qs::io::ipc::comm::getProperty(&client, *cmd.ipc.target, *cmd.ipc.name);
@@ -540,7 +496,7 @@ int runCommand(int argc, char** argv, QCoreApplication* coreApplication) {
 		return listInstances(state);
 	} else if (*state.subcommand.kill) {
 		return killInstances(state);
-	} else if (*state.subcommand.msg || *state.ipc.ipc) {
+	} else if (*state.ipc.ipc) {
 		return ipcCommand(state);
 	} else {
 		if (strcmp(qVersion(), QT_VERSION_STR) != 0) {

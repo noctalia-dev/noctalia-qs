@@ -1,4 +1,5 @@
 qt_add_executable(noctalia-qs main.cpp)
+set_target_properties(noctalia-qs PROPERTIES OUTPUT_NAME "qs")
 
 install(TARGETS noctalia-qs RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 

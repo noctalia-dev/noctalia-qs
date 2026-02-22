@@ -47,7 +47,6 @@ struct CommandState {
 
 	struct {
 		QStringOption path;
-		QStringOption manifest;
 		QStringOption name;
 		bool newest = false;
 		bool anyDisplay = false;
@@ -76,7 +75,6 @@ struct CommandState {
 		CLI::App* getprop = nullptr;
 		CLI::App* wait = nullptr;
 		CLI::App* listen = nullptr;
-		bool showOld = false;
 		QStringOption target;
 		QStringOption name;
 		std::vector<QStringOption> arguments;
@@ -86,7 +84,6 @@ struct CommandState {
 		CLI::App* log = nullptr;
 		CLI::App* list = nullptr;
 		CLI::App* kill = nullptr;
-		CLI::App* msg = nullptr;
 	} subcommand;
 
 	struct {

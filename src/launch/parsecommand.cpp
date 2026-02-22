@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <string>
 #include <limits>
 #include <memory>
 #include <utility>
@@ -7,6 +8,7 @@
 #include <CLI/CLI.hpp> // NOLINT: Need to include this for impls of some CLI11 classes
 #include <CLI/Validators.hpp>
 
+#include "build.hpp"
 #include "launch_p.hpp"
 
 namespace qs::launch {
@@ -21,17 +23,17 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		auto* group =
 		    cmd->add_option_group("Config Selection")
 		        ->description(
-		            "noctalia-qs detects configurations as named directories under each XDG config "
+		            "qs detects configurations as named directories under each XDG config "
 		            "directory as `<xdg dir>/quickshell/<config name>/shell.qml`.\n\n"
 		            "If `<xdg dir>/quickshell/shell.qml` exists, it will be registered as the "
 		            "'default' configuration, and no subdirectories will be considered. "
 		            "If --config is not passed, 'default' will be assumed.\n\n"
 		            "Alternatively, a config can be selected by path with --path.\n\n"
 		            "Examples:\n"
-		            "- `~/.config/quickshell/shell.qml` can be run with `noctalia-qs`\n"
-		            "- `/etc/xdg/quickshell/myconfig/shell.qml` can be run with `noctalia-qs -c myconfig`\n"
-		            "- `~/myshell/shell.qml` can be run with `noctalia-qs -p ~/myshell`\n"
-		            "- `~/myshell/randomfile.qml` can be run with `noctalia-qs -p ~/myshell/randomfile.qml`"
+		            "- `~/.config/quickshell/shell.qml` can be run with `qs`\n"
+		            "- `/etc/xdg/quickshell/myconfig/shell.qml` can be run with `qs -c myconfig`\n"
+		            "- `~/myshell/shell.qml` can be run with `qs -p ~/myshell`\n"
+		            "- `~/myshell/randomfile.qml` can be run with `qs -p ~/myshell/randomfile.qml`"
 		        );
 
 		auto* path = group->add_option("-p,--path", state.config.path)
@@ -41,15 +43,6 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		group->add_option("-c,--config", state.config.name)
 		    ->description("Name of a noctalia-qs configuration to run.")
 		    ->envname("QS_CONFIG_NAME")
-		    ->excludes(path);
-
-		group->add_option("-m,--manifest", state.config.manifest)
-		    ->description(
-		        "[DEPRECATED] Path to a noctalia-qs manifest.\n"
-		        "If a manifest is specified, configs named by -c will point to its entries.\n"
-		        "Defaults to $XDG_CONFIG_HOME/quickshell/manifest.conf"
-		    )
-		    ->envname("QS_MANIFEST")
 		    ->excludes(path);
 
 		if (filtering) {
@@ -123,7 +116,11 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		return group;
 	};
 
-	state.app = std::make_unique<CLI::App>();
+	state.app = std::make_unique<CLI::App>(
+	    std::string("noctalia-qs " QS_VERSION ", revision ")
+	    + std::string(GIT_REVISION).substr(0, 8)
+	    + ", distributed by: " DISTRIBUTOR
+	);
 	auto* cli = state.app.get();
 
 	// Require 0-1 subcommands. Without this, positionals can be parsed as more subcommands.
@@ -248,30 +245,6 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 				get->add_option("property", state.ipc.name)->description("The property to read.");
 			}
 		}
-	}
-
-	{
-		auto* sub = cli->add_subcommand("msg", "[DEPRECATED] Moved to `ipc call`.")->require_option();
-
-		sub->add_option("target", state.ipc.target, "The target to message.");
-
-		sub->add_option("function", state.ipc.name)->description("The function to call in the target.");
-
-		sub->add_option("arguments", state.ipc.arguments)
-		    ->description("Arguments to the called function.")
-		    ->allow_extra_args();
-
-		sub->add_flag("-s,--show", state.ipc.showOld)
-		    ->description(
-		        "Print information about a function or target if given, or all available "
-		        "targets if not."
-		    );
-
-		auto* instance = addInstanceSelection(sub);
-		addConfigSelection(sub, true)->excludes(instance);
-		addLoggingOptions(sub, false, true);
-
-		state.subcommand.msg = sub;
 	}
 
 	CLI11_PARSE(*cli, argc, argv);
