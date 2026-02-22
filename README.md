@@ -9,7 +9,7 @@ noctalia-qs extends Quickshell with features and patches specific to the Noctali
 - `ext-background-effect-v1` Wayland protocol support
 - Noctalia-specific build defaults and configuration
 
-The binary is named `noctalia-qs` and is a drop-in replacement for `quickshell` when using Noctalia Shell.
+The binary is named `qs` and is a drop-in replacement for `quickshell` when using Noctalia Shell.
 
 ## Credits
 
@@ -26,9 +26,9 @@ All credit for the core framework goes to the Quickshell project and its contrib
 See [BUILD.md](BUILD.md) for build instructions.
 
 ```bash
-cmake -GNinja -B build-release -DCMAKE_BUILD_TYPE=Release noctalia-qs
+cmake -GNinja -B build-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr noctalia-qs
 cmake --build build-release
-# binary: build-release/src/noctalia-qs
+# binary: build-release/src/qs
 ```
 
 ## License
