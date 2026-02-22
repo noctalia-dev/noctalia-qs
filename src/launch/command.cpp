@@ -476,7 +476,7 @@ int runCommand(int argc, char** argv, QCoreApplication* coreApplication) {
 
 	if (state.misc.printVersion) {
 		qCInfo(logBare).noquote().nospace() << "noctalia-qs " << QS_VERSION << ", revision "
-		                                    << GIT_REVISION << ", distributed by: " << DISTRIBUTOR;
+		                                    << QString(GIT_REVISION).left(8) << ", distributed by: " << DISTRIBUTOR;
 
 		if (state.log.verbosity > 1) {
 			qCInfo(logBare).noquote() << "\nBuildtime Qt Version:" << QT_VERSION_STR;
