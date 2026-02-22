@@ -22,4 +22,4 @@ target_link_libraries(quickshell-wayland-backgroundeffect PRIVATE
 
 qs_module_pch(quickshell-wayland-backgroundeffect SET large)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-wayland-backgroundeffectplugin)
+target_link_libraries(quickshell PRIVATE quickshell-wayland-backgroundeffectplugin)

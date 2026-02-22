@@ -56,7 +56,7 @@ target_link_libraries(quickshell-core PRIVATE Qt::Quick Qt::QuickPrivate Qt::Wid
 
 qs_module_pch(quickshell-core SET large)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-coreplugin)
+target_link_libraries(quickshell PRIVATE quickshell-coreplugin)
 
 if (BUILD_TESTING)
 	add_subdirectory(test)

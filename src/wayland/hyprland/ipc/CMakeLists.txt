@@ -34,4 +34,4 @@ endif()
 
 qs_module_pch(quickshell-hyprland-ipc SET large)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-hyprland-ipcplugin)
+target_link_libraries(quickshell PRIVATE quickshell-hyprland-ipcplugin)

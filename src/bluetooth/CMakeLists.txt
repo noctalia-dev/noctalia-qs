@@ -39,4 +39,4 @@ qs_add_link_dependencies(quickshell-bluetooth quickshell-dbus)
 
 qs_module_pch(quickshell-bluetooth SET dbus)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-bluetoothplugin)
+target_link_libraries(quickshell PRIVATE quickshell-bluetoothplugin)

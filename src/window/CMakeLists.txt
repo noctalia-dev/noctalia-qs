@@ -28,7 +28,7 @@ target_link_libraries(quickshell-window-init PRIVATE Qt::Qml)
 
 qs_module_pch(quickshell-window SET large)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-windowplugin quickshell-window-init)
+target_link_libraries(quickshell PRIVATE quickshell-windowplugin quickshell-window-init)
 
 if (BUILD_TESTING)
 	add_subdirectory(test)

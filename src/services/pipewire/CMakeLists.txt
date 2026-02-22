@@ -31,4 +31,4 @@ target_link_libraries(quickshell-service-pipewire PRIVATE
 
 qs_module_pch(quickshell-service-pipewire)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-service-pipewireplugin)
+target_link_libraries(quickshell PRIVATE quickshell-service-pipewireplugin)

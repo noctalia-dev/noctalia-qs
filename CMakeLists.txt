@@ -155,8 +155,9 @@ if (USE_JEMALLOC)
 	find_package(PkgConfig REQUIRED)
 	# IMPORTED_TARGET not working for some reason
 	pkg_check_modules(JEMALLOC REQUIRED jemalloc)
-	target_link_libraries(noctalia-qs PRIVATE ${JEMALLOC_LIBRARIES})
+	target_link_libraries(quickshell PRIVATE ${JEMALLOC_LIBRARIES})
 endif()
+
 
 install(
 	FILES ${CMAKE_SOURCE_DIR}/assets/dev.noctalia.noctalia-qs.desktop

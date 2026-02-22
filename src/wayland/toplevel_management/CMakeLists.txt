@@ -25,4 +25,4 @@ target_link_libraries(quickshell-wayland-toplevel-management PRIVATE
 
 qs_module_pch(quickshell-wayland-toplevel-management SET large)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-wayland-toplevel-managementplugin)
+target_link_libraries(quickshell PRIVATE quickshell-wayland-toplevel-managementplugin)

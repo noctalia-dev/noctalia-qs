@@ -49,6 +49,6 @@ qs_add_module_deps_light(quickshell-service-statusnotifier Quickshell Quickshell
 install_qml_module(quickshell-service-statusnotifier)
 
 target_link_libraries(quickshell-service-statusnotifier PRIVATE Qt::Quick Qt::DBus)
-target_link_libraries(noctalia-qs PRIVATE quickshell-service-statusnotifierplugin)
+target_link_libraries(quickshell PRIVATE quickshell-service-statusnotifierplugin)
 
 qs_module_pch(quickshell-service-statusnotifier SET dbus)

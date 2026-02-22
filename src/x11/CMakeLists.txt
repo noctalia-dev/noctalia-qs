@@ -24,4 +24,4 @@ target_link_libraries(quickshell-x11-init PRIVATE Qt::Quick Qt::Qml ${XCB_LIBRAR
 
 qs_module_pch(quickshell-x11 SET large)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-x11plugin quickshell-x11-init)
+target_link_libraries(quickshell PRIVATE quickshell-x11plugin quickshell-x11-init)

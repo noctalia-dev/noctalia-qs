@@ -21,4 +21,4 @@ target_link_libraries(quickshell-hyprland-surface-extensions PRIVATE
 
 qs_module_pch(quickshell-hyprland-surface-extensions)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-hyprland-surface-extensionsplugin)
+target_link_libraries(quickshell PRIVATE quickshell-hyprland-surface-extensionsplugin)

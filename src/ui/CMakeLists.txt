@@ -15,4 +15,4 @@ qt_add_qml_module(quickshell-ui
 qs_module_pch(quickshell-ui SET large)
 
 target_link_libraries(quickshell-ui PRIVATE Qt::Quick)
-target_link_libraries(noctalia-qs PRIVATE quickshell-uiplugin)
+target_link_libraries(quickshell PRIVATE quickshell-uiplugin)

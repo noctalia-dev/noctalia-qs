@@ -20,4 +20,4 @@ install_qml_module(quickshell-i3)
 qs_pch(quickshell-i3)
 qs_pch(quickshell-i3plugin)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-i3plugin)
+target_link_libraries(quickshell PRIVATE quickshell-i3plugin)

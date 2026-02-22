@@ -1,7 +1,7 @@
-qt_add_executable(noctalia-qs main.cpp)
-set_target_properties(noctalia-qs PROPERTIES OUTPUT_NAME "qs")
+qt_add_executable(quickshell main.cpp)
+set_target_properties(quickshell PROPERTIES OUTPUT_NAME "qs")
 
-install(TARGETS noctalia-qs RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS quickshell RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 add_subdirectory(build)
 add_subdirectory(launch)

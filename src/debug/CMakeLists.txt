@@ -4,4 +4,4 @@ qt_add_library(quickshell-debug STATIC
 
 qs_pch(quickshell-debug)
 target_link_libraries(quickshell-debug PRIVATE Qt::Quick)
-target_link_libraries(noctalia-qs PRIVATE quickshell-debug)
+target_link_libraries(quickshell PRIVATE quickshell-debug)

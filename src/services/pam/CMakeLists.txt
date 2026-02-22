@@ -20,4 +20,4 @@ target_link_libraries(quickshell-service-pam PRIVATE
 
 qs_module_pch(quickshell-service-pam)
 
-target_link_libraries(noctalia-qs PRIVATE quickshell-service-pamplugin)
+target_link_libraries(quickshell PRIVATE quickshell-service-pamplugin)
