@@ -15,6 +15,7 @@
 #include <gbm.h>
 #include <libdrm/drm_fourcc.h>
 #include <private/qquickwindow_p.h>
+#include <private/qrhivulkan_p.h>
 #include <qcontainerfwd.h>
 #include <qdebug.h>
 #include <qlist.h>
@@ -73,6 +74,19 @@ VkFormat drmFormatToVkFormat(uint32_t drmFormat) {
 	// NOLINTEND(bugprone-branch-clone)
 }
 
+bool drmFormatHasAlpha(uint32_t drmFormat) {
+	switch (drmFormat) {
+	case DRM_FORMAT_ARGB8888:
+	case DRM_FORMAT_ABGR8888:
+	case DRM_FORMAT_ARGB2101010:
+	case DRM_FORMAT_ABGR2101010:
+	case DRM_FORMAT_ABGR16161616F:
+		return true;
+	default:
+		return false;
+	}
+}
+
 } // namespace
 
 QDebug& operator<<(QDebug& debug, const FourCCStr& fourcc) {
@@ -106,25 +120,27 @@ GbmDeviceHandle::~GbmDeviceHandle() {
 	}
 }
 
-// This will definitely backfire later
+// Prefer ARGB over XRGB: XRGB has undefined alpha bytes which cause
+// transparency artifacts on Vulkan (notably Intel GPUs) since Vulkan
+// doesn't auto-fill alpha=1.0 for X formats like EGL does.
 void LinuxDmabufFormatSelection::ensureSorted() {
 	if (this->sorted) return;
 	auto beginIter = this->formats.begin();
-
-	auto xrgbIter = std::ranges::find_if(this->formats, [](const auto& format) {
-		return format.first == DRM_FORMAT_XRGB8888;
-	});
-
-	if (xrgbIter != this->formats.end()) {
-		std::swap(*beginIter, *xrgbIter);
-		++beginIter;
-	}
 
 	auto argbIter = std::ranges::find_if(this->formats, [](const auto& format) {
 		return format.first == DRM_FORMAT_ARGB8888;
 	});
 
-	if (argbIter != this->formats.end()) std::swap(*beginIter, *argbIter);
+	if (argbIter != this->formats.end()) {
+		std::swap(*beginIter, *argbIter);
+		++beginIter;
+	}
+
+	auto xrgbIter = std::ranges::find_if(this->formats, [](const auto& format) {
+		return format.first == DRM_FORMAT_XRGB8888;
+	});
+
+	if (xrgbIter != this->formats.end()) std::swap(*beginIter, *xrgbIter);
 
 	this->sorted = true;
 }
@@ -945,6 +961,33 @@ WlBufferQSGTexture* WlDmaBuffer::createQsgTextureVulkan(QQuickWindow* window) co
 		    QSize(static_cast<int>(this->width), static_cast<int>(this->height)),
 		    {}
 		);
+
+		// For opaque DRM formats (XRGB, XBGR, etc.), the alpha bytes are underfined.
+		// EGL silently forces alpha=1.0 for these, but Vulkan doesn't. Replace Qt's
+		// default identity-swizzle VkImageView with one that maps alpha to ONE.
+		if (!drmFormatHasAlpha(this->format)) {
+			auto* vkTexture = static_cast<QVkTexture*>(qsgTexture->rhiTexture()); // NOLINT
+
+			devFuncs->vkDestroyImageView(device, vkTexture->imageView, nullptr);
+
+			VkImageViewCreateInfo viewInfo = {};
+			viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			viewInfo.image = image;
+			viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			viewInfo.format = vkFormat;
+			viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+			viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+			viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+			viewInfo.components.a = VK_COMPONENT_SWIZZLE_ONE;
+			viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			viewInfo.subresourceRange.levelCount = 1;
+			viewInfo.subresourceRange.layerCount = 1;
+
+			result = devFuncs->vkCreateImageView(device, &viewInfo, nullptr, &vkTexture->imageView);
+			if (result != VK_SUCCESS) {
+				qCWarning(logDmabuf) << "Failed to create alpha-swizzled VkImageView, result:" << result;
+			}
+		}
 
 		auto* tex = new WlDmaBufferVulkanQSGTexture(
 		    devFuncs,
