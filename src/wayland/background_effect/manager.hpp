@@ -1,27 +1,37 @@
 #pragma once
 
-#include <QtWaylandClient/QWaylandClientExtensionTemplate>
-#include "qwayland-ext-background-effect-v1.h"
+#include <private/qwaylandwindow_p.h>
+#include <qobject.h>
+#include <qtmetamacros.h>
+#include <qwayland-ext-background-effect-v1.h>
+#include <qwaylandclientextension.h>
+
+#include "surface.hpp"
+
+namespace qs::wayland::background_effect::impl {
 
 class BackgroundEffectManager
     : public QWaylandClientExtensionTemplate<BackgroundEffectManager>
-    , public QtWayland::ext_background_effect_manager_v1
-{
-    Q_OBJECT
+    , public QtWayland::ext_background_effect_manager_v1 {
+	Q_OBJECT;
 
 public:
-    static BackgroundEffectManager *instance();
+	explicit BackgroundEffectManager();
 
-    bool hasBlur() const { return m_hasBlur; }
+	BackgroundEffectSurface* createEffectSurface(QtWaylandClient::QWaylandWindow* window);
 
-Q_SIGNALS:
-    void blurSupportChanged();
+	[[nodiscard]] bool blurAvailable() const;
+
+	static BackgroundEffectManager* instance();
+
+signals:
+	void blurAvailableChanged();
 
 protected:
-    void ext_background_effect_manager_v1_capabilities(uint32_t capabilities) override;
+	void ext_background_effect_manager_v1_capabilities(uint32_t flags) override;
 
 private:
-    explicit BackgroundEffectManager();
-
-    bool m_hasBlur = false;
+	bool mBlurAvailable = false;
 };
+
+} // namespace qs::wayland::background_effect::impl
