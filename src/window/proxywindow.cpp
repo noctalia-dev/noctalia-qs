@@ -13,6 +13,7 @@
 #include <qqmlengine.h>
 #include <qqmlinfo.h>
 #include <qqmllist.h>
+#include <qquickgraphicsconfiguration.h>
 #include <qquickitem.h>
 #include <qquickwindow.h>
 #include <qregion.h>
@@ -147,6 +148,15 @@ void ProxyWindowBase::ensureQWindow() {
 	this->window = nullptr; // createQQuickWindow may indirectly reference this->window
 	this->window = this->createQQuickWindow();
 	this->window->setFormat(format);
+
+	// needed for vulkan dmabuf import, qt ignores these if not applicable
+	auto graphicsConfig = this->window->graphicsConfiguration();
+	graphicsConfig.setDeviceExtensions({
+	    "VK_KHR_external_memory_fd",
+	    "VK_EXT_external_memory_dma_buf",
+	    "VK_EXT_image_drm_format_modifier",
+	});
+	this->window->setGraphicsConfiguration(graphicsConfig);
 }
 
 void ProxyWindowBase::createWindow() {
@@ -213,6 +223,7 @@ void ProxyWindowBase::completeWindow() {
 	this->trySetHeight(this->implicitHeight());
 	this->setColor(this->mColor);
 	this->updateMask();
+	QQuickWindowPrivate::get(this->window)->updatesEnabled = this->mUpdatesEnabled;
 
 	// notify initial / post-connection geometry
 	emit this->xChanged();
@@ -467,6 +478,19 @@ void ProxyWindowBase::setSurfaceFormat(QsSurfaceFormat format) {
 
 	this->qsSurfaceFormat = format;
 	emit this->surfaceFormatChanged();
+}
+
+bool ProxyWindowBase::updatesEnabled() const { return this->mUpdatesEnabled; }
+
+void ProxyWindowBase::setUpdatesEnabled(bool updatesEnabled) {
+	if (updatesEnabled == this->mUpdatesEnabled) return;
+	this->mUpdatesEnabled = updatesEnabled;
+
+	if (this->window != nullptr) {
+		QQuickWindowPrivate::get(this->window)->updatesEnabled = updatesEnabled;
+	}
+
+	emit this->updatesEnabledChanged();
 }
 
 qreal ProxyWindowBase::devicePixelRatio() const {

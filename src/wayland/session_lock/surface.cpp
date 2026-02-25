@@ -28,7 +28,7 @@ QSWaylandSessionLockSurface::QSWaylandSessionLockSurface(QtWaylandClient::QWayla
 	wl_output* output = nullptr; // NOLINT (include)
 	auto* waylandScreen = dynamic_cast<QtWaylandClient::QWaylandScreen*>(qwindow->screen()->handle());
 
-	if (waylandScreen != nullptr) {
+	if (waylandScreen != nullptr && !waylandScreen->isPlaceholder() && waylandScreen->output()) {
 		output = waylandScreen->output();
 	} else {
 		qFatal() << "Session lock screen does not corrospond to a real screen. Force closing window";
