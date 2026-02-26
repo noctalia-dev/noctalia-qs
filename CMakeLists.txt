@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(quickshell VERSION "0.0.2" LANGUAGES CXX C)
+project(quickshell VERSION "0.0.3" LANGUAGES CXX C)
 
 set(UNRELEASED_FEATURES)
 
@@ -169,3 +169,10 @@ install(
 	DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
 	RENAME dev.noctalia.noctalia-qs.svg
 )
+
+install(CODE "
+	execute_process(
+		COMMAND ${CMAKE_COMMAND} -E create_symlink \
+		${CMAKE_INSTALL_FULL_BINDIR}/quickshell \$ENV{DESTDIR}${CMAKE_INSTALL_FULL_BINDIR}/qs
+	)
+")
