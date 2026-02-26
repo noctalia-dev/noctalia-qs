@@ -15,6 +15,75 @@ using QtWaylandClient::QWaylandWindow;
 using XdgPositioner = QtWayland::xdg_positioner;
 using qs::wayland::xdg_shell::XdgWmBase;
 
+// Pre-applies slide constraint adjustment client-side so the popup stays on screen
+// even on compositors (e.g. wlroots-based) that do not honor xdg_positioner
+// constraint_adjustment for layer-shell popups.
+// Returns the translation to apply to the anchor rect (parent-window-relative, logical pixels).
+static QPoint computeSlideAdjustmentDelta(
+    PopupAnchor* anchor,
+    QWindow* window,
+    const QRect& anchorRectLogical
+) {
+	auto adj = anchor->adjustment();
+	if (!(adj & PopupAdjustment::Slide)) return {};
+
+	auto* parent = window->transientParent();
+	if (!parent) return {};
+
+	auto popupSize = window->geometry().size();
+	if (popupSize.isEmpty()) return {};
+
+	// On Wayland, parent->geometry().topLeft() is always (0,0) — windows do not know
+	// their global screen position. Work entirely in parent-surface-local coordinates,
+	// using the screen dimensions as bounds. This is correct for layer-shell surfaces,
+	// which always originate at the screen's top-left corner.
+	auto screenSize = parent->screen()->geometry().size();
+	QRect localBounds = {0, 0, screenSize.width(), screenSize.height()};
+
+	auto anchorEdges = anchor->edges();
+	auto anchorGravity = anchor->gravity();
+
+	// Compute anchor point in parent-local coordinates
+	int ax = anchorEdges.testFlag(Edges::Left)  ? anchorRectLogical.left()
+	       : anchorEdges.testFlag(Edges::Right) ? anchorRectLogical.right()
+	                                            : anchorRectLogical.center().x();
+	int ay = anchorEdges.testFlag(Edges::Top)    ? anchorRectLogical.top()
+	       : anchorEdges.testFlag(Edges::Bottom) ? anchorRectLogical.bottom()
+	                                             : anchorRectLogical.center().y();
+
+	// Compute effective popup top-left (same convention as PopupPositioner::reposition)
+	int ex = (anchorGravity.testFlag(Edges::Left)  ? ax - popupSize.width()
+	        : anchorGravity.testFlag(Edges::Right) ? ax - 1
+	                                               : ax - popupSize.width() / 2) + 1;
+	int ey = (anchorGravity.testFlag(Edges::Top)    ? ay - popupSize.height()
+	        : anchorGravity.testFlag(Edges::Bottom) ? ay - 1
+	                                                : ay - popupSize.height() / 2) + 1;
+
+	int dx = 0, dy = 0;
+
+	// Only apply corrections when the popup starts within the parent surface (ex/ey >= 0).
+	// If the popup starts at a negative offset, the parent surface is a narrow side/bottom
+	// bar and the popup is intentionally positioned outside the surface (e.g., a left-directed
+	// tooltip on a right-side bar). In that case the popup is on-screen globally — don't
+	// slide it, because we cannot know the parent's global position and any correction here
+	// would move the popup onto the wrong screen.
+	if (adj.testFlag(PopupAdjustment::SlideX) && ex >= 0) {
+		if (ex + popupSize.width() > localBounds.right())
+			dx = localBounds.right() - popupSize.width() + 1 - ex;
+		if (ex + dx < localBounds.left())
+			dx = localBounds.left() - ex;
+	}
+
+	if (adj.testFlag(PopupAdjustment::SlideY) && ey >= 0) {
+		if (ey + popupSize.height() > localBounds.bottom())
+			dy = localBounds.bottom() - popupSize.height() + 1 - ey;
+		if (ey + dy < localBounds.top())
+			dy = localBounds.top() - ey;
+	}
+
+	return {dx, dy};
+}
+
 void WaylandPopupPositioner::reposition(PopupAnchor* anchor, QWindow* window, bool onlyIfDirty) {
 	auto* waylandWindow = dynamic_cast<QWaylandWindow*>(window->handle());
 	auto* popupRole = waylandWindow ? waylandWindow->surfaceRole<::xdg_popup>() : nullptr;
@@ -43,6 +112,10 @@ void WaylandPopupPositioner::reposition(PopupAnchor* anchor, QWindow* window, bo
 		positioner.set_constraint_adjustment(anchor->adjustment().toInt());
 
 		auto anchorRect = anchor->windowRect();
+
+		// Pre-apply slide adjustment for compositors that don't honor constraint_adjustment
+		auto delta = computeSlideAdjustmentDelta(anchor, window, anchorRect);
+		if (!delta.isNull()) anchorRect.translate(delta);
 
 		if (auto* p = window->transientParent()) {
 			anchorRect = QHighDpi::toNativePixels(anchorRect, p);
@@ -102,6 +175,10 @@ bool WaylandPopupPositioner::shouldRepositionOnMove() const { return true; }
 void WaylandPopupPositioner::setFlags(PopupAnchor* anchor, QWindow* window) {
 	anchor->updateAnchor();
 	auto anchorRect = anchor->windowRect();
+
+	// Pre-apply slide adjustment for compositors that don't honor constraint_adjustment
+	auto delta = computeSlideAdjustmentDelta(anchor, window, anchorRect);
+	if (!delta.isNull()) anchorRect.translate(delta);
 
 	if (auto* p = window->transientParent()) {
 		anchorRect = QHighDpi::toNativePixels(anchorRect, p);
