@@ -16,7 +16,8 @@ BackgroundEffectManager::BackgroundEffectManager(): QWaylandClientExtensionTempl
 
 BackgroundEffectSurface*
 BackgroundEffectManager::createEffectSurface(QtWaylandClient::QWaylandWindow* window) {
-	return new BackgroundEffectSurface(this->get_background_effect(window->surface()));
+	auto* wlSurface = window->surface();
+	return new BackgroundEffectSurface(this->get_background_effect(wlSurface), wlSurface);
 }
 
 bool BackgroundEffectManager::blurAvailable() const {

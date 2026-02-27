@@ -9,9 +9,10 @@
 namespace qs::wayland::background_effect::impl {
 
 BackgroundEffectSurface::BackgroundEffectSurface(
-    ::ext_background_effect_surface_v1* surface // NOLINT(misc-include-cleaner)
+    ::ext_background_effect_surface_v1* surface, // NOLINT(misc-include-cleaner)
+    ::wl_surface* wlSurface                      // NOLINT(misc-include-cleaner)
 )
-    : QtWayland::ext_background_effect_surface_v1(surface) {}
+    : QtWayland::ext_background_effect_surface_v1(surface), mWlSurface(wlSurface) {}
 
 BackgroundEffectSurface::~BackgroundEffectSurface() {
 	if (!this->isInitialized()) return;
@@ -24,6 +25,11 @@ BackgroundEffectSurface::~BackgroundEffectSurface() {
 }
 
 void BackgroundEffectSurface::setInert() { this->mInert = true; }
+
+void BackgroundEffectSurface::commitSurface() {
+	if (this->mInert || !this->mWlSurface) return;
+	wl_surface_commit(this->mWlSurface); // NOLINT(misc-include-cleaner)
+}
 
 void BackgroundEffectSurface::setBlurRegion(const QRegion& region) {
 	if (!this->isInitialized()) return;

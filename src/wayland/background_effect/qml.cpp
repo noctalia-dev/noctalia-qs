@@ -86,11 +86,20 @@ void BackgroundEffect::updateBlurRegion() {
 	if (!this->surface || !this->proxyWindow) return;
 
 	this->pendingBlurRegion = true;
+
+	// Immediately commit the blur region without waiting for the render loop.
+	// This is critical after app launches: Niri may stop sending frame callbacks to the shell
+	// (since a new app window is in focus), causing schedulePolish() to never fire. Without an
+	// immediate commit, the old blur region stays visible until the next render frame, which may
+	// only happen when a new panel opens. The synchronized schedulePolish() path is kept for
+	// precision during active render frames (e.g. panel open/close animations).
+	this->commitBlurRegionNow();
+
 	this->proxyWindow->schedulePolish();
 }
 
-void BackgroundEffect::onWindowPolished() {
-	if (!this->surface || !this->pendingBlurRegion) return;
+void BackgroundEffect::commitBlurRegionNow() {
+	if (!this->surface || !this->mWindow || !this->mWaylandWindow) return;
 
 	QRegion region;
 	if (this->mBlurRegion) {
@@ -102,7 +111,13 @@ void BackgroundEffect::onWindowPolished() {
 	}
 
 	this->surface->setBlurRegion(region);
+	this->surface->commitSurface();
 	this->pendingBlurRegion = false;
+}
+
+void BackgroundEffect::onWindowPolished() {
+	if (!this->pendingBlurRegion) return;
+	this->commitBlurRegionNow();
 }
 
 void BackgroundEffect::onWindowConnected() {

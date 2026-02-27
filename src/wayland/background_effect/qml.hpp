@@ -63,6 +63,7 @@ private slots:
 	void onBlurRegionDestroyed();
 	void onWindowPolished();
 	void updateBlurRegion();
+	void commitBlurRegionNow();
 
 private:
 	ProxyWindowBase* proxyWindow = nullptr;
