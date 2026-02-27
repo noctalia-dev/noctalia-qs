@@ -26,7 +26,7 @@ All credit for the core framework goes to the Quickshell project and its contrib
 See [BUILD.md](BUILD.md) for build instructions.
 
 ```bash
-cmake -GNinja -B build-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr noctalia-qs
+cmake -GNinja -B build-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local noctalia-qs
 cmake --build build-release
 sudo cmake --install build-release
 # binary: build-release/src/quickshell
