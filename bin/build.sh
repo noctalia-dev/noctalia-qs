@@ -12,7 +12,7 @@ echo "==> Configuring..."
 cmake -GNinja \
     -B "$BUILD_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_PREFIX=/usr/local \
     "$ROOT_DIR"
 
 echo "==> Building..."
@@ -21,4 +21,4 @@ cmake --build "$BUILD_DIR"
 echo "==> Installing (requires sudo)..."
 sudo cmake --install "$BUILD_DIR"
 
-echo "==> Done. Binary installed to /usr/bin/quickshell"
+echo "==> Done. Binary installed to /usr/local/bin/qs"
