@@ -492,9 +492,11 @@ void FileView::updatePath() {
 }
 
 void FileView::updateWatchedFiles() {
-	// If inotify events are sent to the watcher after deletion and deleteLater
-	// isn't used, a use after free in the QML engine will occur.
+	// Disconnect signals before nulling the pointer to prevent a race where an
+	// inotify event fires between deleteLater() and actual destruction, causing
+	// onWatchedFileChanged/onWatchedDirectoryChanged to dereference nullptr.
 	if (this->watcher) {
+		this->watcher->disconnect(this);
 		this->watcher->deleteLater();
 		this->watcher = nullptr;
 	}
