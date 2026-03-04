@@ -93,7 +93,7 @@ void I3IpcController::handleGetWorkspacesEvent(I3IpcEvent* event) {
 
 	auto workspaces = data.array();
 
-	const auto& mList = this->mWorkspaces.valueList();
+	const auto mList = this->mWorkspaces.valueList();
 	auto names = QVector<QString>();
 
 	qCDebug(logI3Ipc) << "There are" << workspaces.toVariantList().length() << "workspaces";
@@ -149,7 +149,7 @@ void I3IpcController::handleGetOutputsEvent(I3IpcEvent* event) {
 	auto data = event->mData;
 
 	auto monitors = data.array();
-	const auto& mList = this->mMonitors.valueList();
+	const auto mList = this->mMonitors.valueList();
 	auto names = QVector<QString>();
 
 	qCDebug(logI3Ipc) << "There are" << monitors.toVariantList().length() << "monitors";
