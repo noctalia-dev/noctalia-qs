@@ -43,7 +43,7 @@ QSWaylandSessionLockSurface::QSWaylandSessionLockSurface(QtWaylandClient::QWayla
 
 QSWaylandSessionLockSurface::~QSWaylandSessionLockSurface() {
 	if (this->ext != nullptr) this->ext->surface = nullptr;
-	this->destroy();
+	if (this->object()) this->destroy();
 }
 
 bool QSWaylandSessionLockSurface::isExposed() const { return this->configured; }

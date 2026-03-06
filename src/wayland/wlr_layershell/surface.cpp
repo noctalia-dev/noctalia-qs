@@ -178,7 +178,7 @@ LayerSurface::~LayerSurface() {
 		this->bridge->surface = nullptr;
 	}
 
-	this->destroy();
+	if (this->object()) this->destroy();
 }
 
 void LayerSurface::zwlr_layer_surface_v1_configure(quint32 serial, quint32 width, quint32 height) {
@@ -200,15 +200,33 @@ void LayerSurface::zwlr_layer_surface_v1_configure(quint32 serial, quint32 width
 	}
 }
 
-void LayerSurface::zwlr_layer_surface_v1_closed() { this->window()->window()->close(); }
+void LayerSurface::zwlr_layer_surface_v1_closed() {
+	this->configured = false;
+
+	if (this->object()) {
+		this->destroy();
+	}
+
+	if (auto* window = this->window(); window != nullptr) {
+		if (auto* qwindow = window->window(); qwindow != nullptr) {
+			qwindow->close();
+		}
+	}
+}
 
 bool LayerSurface::isExposed() const { return this->configured; }
 
-void LayerSurface::applyConfigure() { this->window()->resizeFromApplyConfigure(this->size); }
+void LayerSurface::applyConfigure() {
+	if (auto* window = this->window(); window != nullptr) {
+		window->resizeFromApplyConfigure(this->size);
+	}
+}
 
 QWindow* LayerSurface::qwindow() { return this->window()->window(); }
 
 void LayerSurface::commit() {
+	if (!this->object()) return;
+
 	const auto& p = this->bridge->state;
 	auto& c = this->committed;
 
