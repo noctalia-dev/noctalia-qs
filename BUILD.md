@@ -15,15 +15,7 @@ Please make this descriptive enough to identify your specific package, for examp
 - `Nixpkgs`
 - `Fedora COPR (errornointernet/quickshell)`
 
-`-DDISTRIBUTOR_DEBUGINFO_AVAILABLE=YES/NO`
-
-If we can retrieve binaries and debug information for the package without actually running your
-distribution (e.g. from an website), and you would like to strip the binary, please set this to `YES`.
-
-If we cannot retrieve debug information, please set this to `NO` and
-**ensure you aren't distributing stripped (non debuggable) binaries**.
-
-In both cases you should build with `-DCMAKE_BUILD_TYPE=RelWithDebInfo` (then split or keep the debuginfo).
+Please leave at least symbol names attached to the binary for debugging purposes.
 
 ### QML Module dir
 Currently all QML modules are statically linked to quickshell, but this is where
@@ -64,14 +56,18 @@ At least Qt 6.6 is required.
 
 All features are enabled by default and some have their own dependencies.
 
-### Crash Reporter
-The crash reporter catches crashes, restarts quickshell when it crashes,
+### Crash Handler
+The crash reporter catches crashes, restarts Quickshell when it crashes,
 and collects useful crash information in one place. Leaving this enabled will
 enable us to fix bugs far more easily.
 
-To disable: `-DCRASH_REPORTER=OFF`
+To disable: `-DCRASH_HANDLER=OFF`
 
-Dependencies: `google-breakpad` (static library)
+Dependencies: `cpptrace`
+
+Note: `-DVENDOR_CPPTRACE=ON` can be set to vendor cpptrace using FetchContent.
+
+When using FetchContent, `libunwind` is required, and `libdwarf` can be provided by the package manager or fetched with FetchContent.
 
 ### Jemalloc
 We recommend leaving Jemalloc enabled as it will mask memory fragmentation caused
