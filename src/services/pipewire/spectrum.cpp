@@ -577,8 +577,8 @@ void PwAudioSpectrum::processFrame() {
 
 	// 8. Temporal smoothing: bars rise and fall smoothly for fluid animation.
 	//    Rise is fast but not instant; fall is slower. Both rates are frame-rate independent.
-	float fall = std::pow(0.05f, 1.0f / (0.5f * static_cast<float>(this->mFrameRate)));
-	float rise = std::pow(0.1f, 1.0f / (0.15f * static_cast<float>(this->mFrameRate)));
+	float fall = std::pow(0.05f, 1.0f / (0.8f * static_cast<float>(this->mFrameRate)));
+	float rise = std::pow(0.1f, 1.0f / (0.25f * static_cast<float>(this->mFrameRate)));
 	for (int i = 0; i < this->mBarCount; i++) {
 		if (bars[i] >= this->mPrevBars[i]) {
 			this->mPrevBars[i] = this->mPrevBars[i] * rise + bars[i] * (1.0f - rise);
