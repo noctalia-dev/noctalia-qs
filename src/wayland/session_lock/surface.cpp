@@ -34,12 +34,16 @@ QSWaylandSessionLockSurface::QSWaylandSessionLockSurface(QtWaylandClient::QWayla
 		qFatal() << "Session lock screen does not corrospond to a real screen. Force closing window";
 	}
 
+	if (window->waylandSurface() == nullptr) {
+		qFatal() << "Session lock surface created without a wayland surface.";
+	}
+
 	this->init(this->ext->lock->get_lock_surface(window->waylandSurface()->object(), output));
 }
 
 QSWaylandSessionLockSurface::~QSWaylandSessionLockSurface() {
 	if (this->ext != nullptr) this->ext->surface = nullptr;
-	this->destroy();
+	if (this->object()) this->destroy();
 }
 
 bool QSWaylandSessionLockSurface::isExposed() const { return this->configured; }

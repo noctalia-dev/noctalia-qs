@@ -69,7 +69,7 @@ void WlSessionLock::updateSurfaces(bool show, WlSessionLock* old) {
 	for (auto& [screen, surface]: map) {
 		if (!screens.contains(screen)) {
 			this->surfaces.remove(screen);
-			surface->deleteLater();
+			delete surface;
 		}
 	}
 
