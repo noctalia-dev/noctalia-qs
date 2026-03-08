@@ -249,6 +249,20 @@ int parseCommand(int argc, char** argv, CommandState& state) {
 		}
 	}
 
+	{
+		auto* sub = cli->add_subcommand("url", "Handle a noctalia:// URL.");
+
+		sub->add_option("url", state.url.urlString)
+		    ->description("The noctalia:// URL to handle.")
+		    ->required();
+
+		auto* instance = addInstanceSelection(sub);
+		addConfigSelection(sub, true)->excludes(instance);
+		addLoggingOptions(sub, false, true);
+
+		state.subcommand.url = sub;
+	}
+
 	CLI11_PARSE(*cli, argc, argv);
 
 	return 65535;

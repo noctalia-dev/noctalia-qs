@@ -5,3 +5,5 @@ NoDisplay=true
 
 Name=noctalia-qs
 Icon=dev.noctalia.noctalia-qs
+MimeType=x-scheme-handler/noctalia;
+Exec=quickshell url %u

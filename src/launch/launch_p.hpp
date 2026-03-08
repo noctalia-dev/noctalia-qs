@@ -84,7 +84,12 @@ struct CommandState {
 		CLI::App* log = nullptr;
 		CLI::App* list = nullptr;
 		CLI::App* kill = nullptr;
+		CLI::App* url = nullptr;
 	} subcommand;
+
+	struct {
+		QStringOption urlString;
+	} url;
 
 	struct {
 		bool checkCompat = false;

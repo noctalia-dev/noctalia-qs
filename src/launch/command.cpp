@@ -388,6 +388,28 @@ int ipcCommand(CommandState& cmd) {
 	});
 }
 
+int urlCommand(CommandState& cmd) {
+	auto urlStr = *cmd.url.urlString;
+
+	if (!urlStr.startsWith("noctalia://")) {
+		qCCritical(logBare) << "Invalid URL: must start with noctalia://";
+		return -1;
+	}
+
+	InstanceLockInfo instance;
+	auto r = selectInstance(cmd, &instance);
+	if (r != 0) {
+		qCCritical(logBare) << "No running noctalia-qs instance found to handle the URL.";
+		return r;
+	}
+
+	return IpcClient::connect(instance.instance.instanceId, [&](IpcClient& client) {
+		QVector<QString> arguments;
+		arguments.append(urlStr);
+		return qs::io::ipc::comm::callFunction(&client, "url", "handle", arguments);
+	});
+}
+
 int launchFromCommand(CommandState& cmd, QCoreApplication* coreApplication) {
 	QString configPath;
 
@@ -500,6 +522,8 @@ int runCommand(int argc, char** argv, QCoreApplication* coreApplication) {
 		return listInstances(state);
 	} else if (*state.subcommand.kill) {
 		return killInstances(state);
+	} else if (*state.subcommand.url) {
+		return urlCommand(state);
 	} else if (*state.ipc.ipc) {
 		return ipcCommand(state);
 	} else {
