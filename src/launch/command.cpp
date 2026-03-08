@@ -20,7 +20,10 @@
 #include <qlogging.h>
 #include <qloggingcategory.h>
 #include <qnamespace.h>
+#include <qregularexpression.h>
 #include <qstandardpaths.h>
+#include <qurl.h>
+#include <qurlquery.h>
 #include <qtenvironmentvariables.h>
 #include <qtversion.h>
 #include <unistd.h>
@@ -396,6 +399,85 @@ int urlCommand(CommandState& cmd) {
 		return -1;
 	}
 
+	// Parse the URL
+	auto url = QUrl(urlStr);
+	if (!url.isValid() || url.scheme() != "noctalia") {
+		qCCritical(logBare) << "Malformed noctalia:// URL";
+		return -1;
+	}
+
+	// Extract path segments: noctalia://<action>/<type>/<name>
+	// QUrl treats the part after :// as authority (host), so:
+	//   noctalia://install/plugin/hello-world
+	//   -> host = "install", path = "/plugin/hello-world"
+	auto action = url.host();
+	auto path = url.path();
+	if (path.startsWith('/')) path = path.mid(1);
+	if (path.endsWith('/')) path.chop(1);
+	auto segments = path.split('/', Qt::SkipEmptyParts);
+
+	if (action.isEmpty() || segments.size() < 2) {
+		qCCritical(logBare) << "Invalid URL: expected noctalia://<action>/<type>/<name>";
+		return -1;
+	}
+
+	auto type = segments.value(0);
+	// Name can contain spaces (rejoin remaining segments)
+	auto name = QStringList(segments.mid(1)).join('/');
+
+	// Input sanitization: name must only contain safe characters
+	static const QRegularExpression safeNameRe("^[a-zA-Z0-9\\-_. ]+$");
+	if (!safeNameRe.match(name).hasMatch()) {
+		qCCritical(logBare) << "Invalid URL: name contains disallowed characters:" << name;
+		return -1;
+	}
+
+	// Extract and validate optional source parameter
+	auto query = QUrlQuery(url.query());
+	auto source = query.queryItemValue("source", QUrl::FullyDecoded);
+
+	if (!source.isEmpty()) {
+		// Source must be https and contain no shell metacharacters
+		if (!source.startsWith("https://")) {
+			qCCritical(logBare) << "Invalid URL: source must use https://";
+			return -1;
+		}
+		static const QRegularExpression unsafeUrlRe("[;`$|&<>(){}!\\[\\]\\\\]");
+		if (unsafeUrlRe.match(source).hasMatch()) {
+			qCCritical(logBare) << "Invalid URL: source contains disallowed characters";
+			return -1;
+		}
+	}
+
+	// Validate action and type
+	QString ipcTarget;
+	QString ipcFunction;
+
+	if (action == "install") {
+		if (type == "plugin") {
+			ipcTarget = "plugin";
+			ipcFunction = "install";
+		} else if (type == "colorscheme") {
+			ipcTarget = "colorScheme";
+			ipcFunction = "install";
+		} else {
+			qCCritical(logBare) << "Invalid URL: unknown type:" << type;
+			return -1;
+		}
+	} else if (action == "apply") {
+		if (type == "colorscheme") {
+			ipcTarget = "colorScheme";
+			ipcFunction = "set";
+		} else {
+			qCCritical(logBare) << "Invalid URL: unknown apply type:" << type;
+			return -1;
+		}
+	} else {
+		qCCritical(logBare) << "Invalid URL: unknown action:" << action;
+		return -1;
+	}
+
+	// Find running instance and dispatch
 	InstanceLockInfo instance;
 	auto r = selectInstance(cmd, &instance);
 	if (r != 0) {
@@ -405,8 +487,9 @@ int urlCommand(CommandState& cmd) {
 
 	return IpcClient::connect(instance.instance.instanceId, [&](IpcClient& client) {
 		QVector<QString> arguments;
-		arguments.append(urlStr);
-		return qs::io::ipc::comm::callFunction(&client, "url", "handle", arguments);
+		arguments.append(name);
+		arguments.append(source); // Empty string if no ?source= param
+		return qs::io::ipc::comm::callFunction(&client, ipcTarget, ipcFunction, arguments);
 	});
 }
 
