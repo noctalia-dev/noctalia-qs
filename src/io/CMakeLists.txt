@@ -21,10 +21,6 @@ qt_add_qml_module(quickshell-io
 		FileView.qml
 )
 
-target_sources(quickshell-io PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-)
-
 qs_add_module_deps_light(quickshell-io Quickshell)
 install_qml_module(quickshell-io)
 

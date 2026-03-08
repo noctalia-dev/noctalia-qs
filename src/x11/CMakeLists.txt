@@ -11,11 +11,6 @@ qt_add_qml_module(quickshell-x11
 	DEPENDENCIES QtQuick
 )
 
-target_sources(quickshell-x11 PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-	${CMAKE_BINARY_DIR}/src/window/meta_types/qt6quickshell-window_metatypes.json
-)
-
 if(I3)
 	add_subdirectory(i3)
 endif()

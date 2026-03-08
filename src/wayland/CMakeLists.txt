@@ -150,10 +150,6 @@ qt_add_qml_module(quickshell-wayland
 	IMPORTS ${WAYLAND_MODULES}
 )
 
-target_sources(quickshell-wayland PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-)
-
 qs_add_module_deps_light(quickshell-wayland Quickshell)
 
 install_qml_module(quickshell-wayland)

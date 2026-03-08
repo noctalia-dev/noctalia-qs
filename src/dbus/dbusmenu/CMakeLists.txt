@@ -20,10 +20,6 @@ qt_add_qml_module(quickshell-dbusmenu
 	DEPENDENCIES QtQml
 )
 
-target_sources(quickshell-dbusmenu PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-)
-
 qs_add_module_deps_light(quickshell-dbusmenu Quickshell)
 
 install_qml_module(quickshell-dbusmenu)

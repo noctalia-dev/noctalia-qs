@@ -12,10 +12,6 @@ qt_add_qml_module(quickshell-window
 	DEPENDENCIES QtQuick
 )
 
-target_sources(quickshell-window PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-)
-
 qs_add_module_deps_light(quickshell-window Quickshell)
 
 install_qml_module(quickshell-window)

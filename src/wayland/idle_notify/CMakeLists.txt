@@ -9,10 +9,6 @@ qt_add_qml_module(quickshell-wayland-idle-notify
 	DEPENDENCIES QtQuick
 )
 
-target_sources(quickshell-wayland-idle-notify PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-)
-
 install_qml_module(quickshell-wayland-idle-notify)
 
 qs_add_module_deps_light(quickshell-wayland-idle-notify Quickshell)

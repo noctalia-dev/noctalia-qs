@@ -13,10 +13,6 @@ qt_add_qml_module(quickshell-i3-ipc
 	DEPENDENCIES QtQml
 )
 
-target_sources(quickshell-i3-ipc PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-)
-
 qs_add_module_deps_light(quickshell-i3-ipc Quickshell)
 
 install_qml_module(quickshell-i3-ipc)

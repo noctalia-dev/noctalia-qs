@@ -10,10 +10,6 @@ qt_add_qml_module(quickshell-hyprland-global-shortcuts
 	DEPENDENCIES QtQml
 )
 
-target_sources(quickshell-hyprland-global-shortcuts PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-)
-
 install_qml_module(quickshell-hyprland-global-shortcuts)
 
 wl_proto(wlp-hyprland-shortcuts hyprland-global-shortcuts-v1 "${CMAKE_CURRENT_SOURCE_DIR}")

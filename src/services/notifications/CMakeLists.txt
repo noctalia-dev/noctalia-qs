@@ -22,10 +22,6 @@ qt_add_qml_module(quickshell-service-notifications
 	VERSION 0.1
 )
 
-target_sources(quickshell-service-notifications PRIVATE
-	${CMAKE_BINARY_DIR}/src/core/meta_types/qt6quickshell-core_metatypes.json
-)
-
 qs_add_module_deps_light(quickshell-service-notifications Quickshell)
 install_qml_module(quickshell-service-notifications)
 
