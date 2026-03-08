@@ -464,14 +464,6 @@ int urlCommand(CommandState& cmd) {
 			qCCritical(logBare) << "Invalid URL: unknown type:" << type;
 			return -1;
 		}
-	} else if (action == "apply") {
-		if (type == "colorscheme") {
-			ipcTarget = "colorScheme";
-			ipcFunction = "set";
-		} else {
-			qCCritical(logBare) << "Invalid URL: unknown apply type:" << type;
-			return -1;
-		}
 	} else {
 		qCCritical(logBare) << "Invalid URL: unknown action:" << action;
 		return -1;
