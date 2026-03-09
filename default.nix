@@ -57,7 +57,7 @@
 
   unwrapped = stdenv.mkDerivation {
     pname = "noctalia-qs${lib.optionalString debug "-debug"}";
-    version = "0.0.1";
+    version = builtins.substring 0 7 gitRev;
     src = nix-gitignore.gitignoreSource "/default.nix\n" ./.;
 
     dontWrapQtApps = true; # see wrappers
