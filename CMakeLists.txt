@@ -90,8 +90,11 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 	add_compile_options(-Wno-vla-cxx-extension)
 endif()
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO ON)
+boption(LTO "Link-Time Optimization (may break with non-LTO Qt)" OFF)
+if (LTO)
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO ON)
+endif()
 
 # pipewire defines this, breaking PCH
 add_compile_definitions(_REENTRANT)
