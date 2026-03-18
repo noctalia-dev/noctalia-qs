@@ -19,6 +19,8 @@
   pam,
   glib,
   polkit,
+  cpptrace,
+  libunwind,
   version,
   gitRev,
 }:
@@ -64,11 +66,18 @@ stdenv.mkDerivation {
     pipewire
     polkit
     glib
+    (cpptrace.overrideAttrs (old: {
+      cmakeFlags = (old.cmakeFlags or [ ]) ++ [
+        (lib.cmakeBool "CPPTRACE_UNWIND_WITH_LIBUNWIND" true)
+      ];
+      buildInputs = (old.buildInputs or [ ]) ++ [ libunwind ];
+    }))
   ];
 
   cmakeFlags = [
     (lib.cmakeFeature "DISTRIBUTOR" "Official-Nix-Flake")
     (lib.cmakeBool "DISTRIBUTOR_DEBUGINFO_AVAILABLE" true)
+    (lib.cmakeBool "CRASH_HANDLER" true)
     (lib.cmakeFeature "INSTALL_QML_PREFIX" qt6.qtbase.qtQmlPrefix)
     (lib.cmakeFeature "GIT_REVISION" gitRev)
   ];
