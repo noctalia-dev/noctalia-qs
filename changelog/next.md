@@ -26,6 +26,7 @@ set shell id.
 - Added Quickshell version checking and version gated preprocessing.
 - Added a way to detect if an icon is from the system icon theme or not.
 - Added vulkan support to screencopy.
+- Added generic WindowManager interface implementing ext-workspace.
 
 ## Other Changes
 
@@ -33,6 +34,10 @@ set shell id.
 - IPC operations filter available instances to the current display connection by default.
 - PwNodeLinkTracker ignores sound level monitoring programs.
 - Replaced breakpad with cpptrace.
+- Reloads are prevented if no file content has changed.
+- Added `QS_DISABLE_FILE_WATCHER` environment variable to disable file watching.
+- Added `QS_DISABLE_CRASH_HANDLER` environment variable to disable crash handling.
+- Added `QS_CRASHREPORT_URL` environment variable to allow overriding the crash reporter link.
 
 ## Bug Fixes
 
@@ -43,6 +48,7 @@ set shell id.
 - Fixed volumes not initializing if a pipewire device was already loaded before its node.
 - Fixed hyprland active toplevel not resetting after window closes.
 - Fixed hyprland ipc window names and titles being reversed.
+- Fixed a hyprland ipc crash when refreshing toplevels before workspaces.
 - Fixed missing signals for system tray item title and description updates.
 - Fixed asynchronous loaders not working after reload.
 - Fixed asynchronous loaders not working before window creation.
@@ -53,6 +59,8 @@ set shell id.
 - Fixed ToplevelManager not clearing activeToplevel on deactivation.
 - Desktop action order is now preserved.
 - Fixed partial socket reads in greetd and hyprland on slow machines.
+- Worked around Qt bug causing crashes when plugging and unplugging monitors.
+- Fixed HyprlandFocusGrab crashing if windows were destroyed after being passed to it.
 
 ## Packaging Changes
 
@@ -60,3 +68,4 @@ set shell id.
 - `vulkan-headers` has been added as a build-time dependency for screencopy (Vulkan backend support).
 - `breakpad` has been replaced by `cpptrace`, which is far easier to package, and the `CRASH_REPORTER` cmake variable has been replaced with `CRASH_HANDLER` to stop this from being easy to ignore.
 - `DISTRIBUTOR_DEBUGINFO_AVAILABLE` was removed as it is no longer important without breakpad.
+- `libdrm` is now unconditionally required as a direct dependency.

@@ -15,7 +15,7 @@ Please make this descriptive enough to identify your specific package, for examp
 - `Nixpkgs`
 - `Fedora COPR (errornointernet/quickshell)`
 
-Please leave at least symbol names attached to the binary for debugging purposes.
+If you are forking quickshell, please change `CRASHREPORT_URL` to your own issue tracker.
 
 ### QML Module dir
 Currently all QML modules are statically linked to quickshell, but this is where
@@ -33,6 +33,7 @@ Quickshell has a set of base dependencies you will always need, names vary by di
 - `cmake`
 - `qt6base`
 - `qt6declarative`
+- `libdrm`
 - `qtshadertools` (build-time)
 - `spirv-tools` (build-time)
 - `pkg-config` (build-time)
@@ -67,7 +68,13 @@ Dependencies: `cpptrace`
 
 Note: `-DVENDOR_CPPTRACE=ON` can be set to vendor cpptrace using FetchContent.
 
-When using FetchContent, `libunwind` is required, and `libdwarf` can be provided by the package manager or fetched with FetchContent.
+When using FetchContent, `libunwind` is required, and `libdwarf` can be provided by the
+package manager or fetched with FetchContent.
+
+*Please ensure binaries have usable symbols.* We do not necessarily need full debuginfo, but
+leaving symbols in the binary is extremely helpful. You can check if symbols are useful
+by sending a SIGSEGV to the process and ensuring symbols for the quickshell binary are present
+in the trace.
 
 ### Jemalloc
 We recommend leaving Jemalloc enabled as it will mask memory fragmentation caused
@@ -140,7 +147,6 @@ Enables streaming video from monitors and toplevel windows through various proto
 To disable: `-DSCREENCOPY=OFF`
 
 Dependencies:
-- `libdrm`
 - `libgbm`
 - `vulkan-headers` (build-time)
 
@@ -239,7 +245,7 @@ When set to `C` or `POSIX`, Qt emits a large number of warnings that bury real b
 
 #### Configuring the build
 ```sh
-$ cmake -GNinja -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo [additional disable flags from above here]
+$ cmake -GNinja -B build -DCMAKE_BUILD_TYPE=Release [additional disable flags from above here]
 ```
 
 Note that features you do not supply dependencies for MUST be disabled with their associated flags

@@ -13,7 +13,7 @@ add_subdirectory(widgets)
 add_subdirectory(ui)
 add_subdirectory(windowmanager)
 
-if (CRASH_REPORTER)
+if (CRASH_HANDLER)
 	add_subdirectory(crash)
 endif()
 

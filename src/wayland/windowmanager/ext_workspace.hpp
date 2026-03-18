@@ -4,7 +4,6 @@
 #include <qlist.h>
 #include <qloggingcategory.h>
 #include <qscreen.h>
-#include <qscreen_platform.h>
 #include <qtclasshelpermacros.h>
 #include <qtmetamacros.h>
 #include <qtypes.h>
@@ -12,11 +11,12 @@
 #include <qwaylandclientextension.h>
 #include <wayland-ext-workspace-v1-client-protocol.h>
 
+#include "../../core/logcat.hpp"
 #include "../output_tracking.hpp"
 
 namespace qs::wayland::workspace {
 
-Q_DECLARE_LOGGING_CATEGORY(logWorkspace);
+QS_DECLARE_LOGGING_CATEGORY(logWorkspace);
 
 class WorkspaceGroup;
 class Workspace;
@@ -83,8 +83,8 @@ protected:
 	void ext_workspace_handle_v1_id(const QString& id) override;
 	void ext_workspace_handle_v1_name(const QString& name) override;
 	void ext_workspace_handle_v1_coordinates(wl_array* coordinates) override;
-	void ext_workspace_handle_v1_state(uint32_t state) override;
-	void ext_workspace_handle_v1_capabilities(uint32_t capabilities) override;
+	void ext_workspace_handle_v1_state(quint32 state) override;
+	void ext_workspace_handle_v1_capabilities(quint32 capabilities) override;
 	void ext_workspace_handle_v1_removed() override;
 
 private:
@@ -106,7 +106,7 @@ public:
 	bool canCreateWorkspace : 1 = false;
 
 protected:
-	void ext_workspace_group_handle_v1_capabilities(uint32_t capabilities) override;
+	void ext_workspace_group_handle_v1_capabilities(quint32 capabilities) override;
 	void ext_workspace_group_handle_v1_output_enter(::wl_output* output) override;
 	void ext_workspace_group_handle_v1_output_leave(::wl_output* output) override;
 	void ext_workspace_group_handle_v1_workspace_enter(::ext_workspace_handle_v1* handle) override;

@@ -27,7 +27,7 @@
 #include "build.hpp"
 #include "launch_p.hpp"
 
-#if CRASH_REPORTER
+#if CRASH_HANDLER
 #include "../crash/handler.hpp"
 #endif
 
@@ -137,10 +137,12 @@ int launch(const LaunchArgs& args, char** argv, QCoreApplication* coreApplicatio
 	    .display = getDisplayConnection(),
 	};
 
-#if CRASH_REPORTER
-	crash::CrashHandler::init();
+#if CRASH_HANDLER
+	if (qEnvironmentVariableIsSet("QS_DISABLE_CRASH_HANDLER")) {
+		qInfo() << "Crash handling disabled.";
+	} else {
+		crash::CrashHandler::init();
 
-	{
 		auto* log = LogManager::instance();
 		crash::CrashHandler::setRelaunchInfo({
 		    .instance = InstanceInfo::CURRENT,

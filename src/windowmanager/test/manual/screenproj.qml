@@ -11,21 +11,20 @@ FloatingWindow {
 
 		ColumnLayout {
 			Repeater {
-				model: WindowManager.windowsetProjections
+				model: Quickshell.screens
 
 				WrapperRectangle {
 					id: delegate
-					required property WindowsetProjection modelData
+					required property ShellScreen modelData
 					color: "slategray"
 					margin: 5
 
 					ColumnLayout {
-						Label { text: delegate.modelData.toString() }
-						Label { text: `Screens: ${delegate.modelData.screens.map(s => s.name)}` }
+						Label { text: `Screen: ${delegate.modelData.name}` }
 
 						Repeater {
 							model: ScriptModel {
-								values: delegate.modelData.windowsets
+								values: WindowManager.screenProjection(delegate.modelData).windowsets
 							}
 
 							WorkspaceDelegate {}

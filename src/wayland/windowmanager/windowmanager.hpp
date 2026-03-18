@@ -3,7 +3,7 @@
 #include <qtmetamacros.h>
 
 #include "../../windowmanager/windowmanager.hpp"
-#include "workspace.hpp"
+#include "windowset.hpp"
 
 namespace qs::wm::wayland {
 
@@ -12,14 +12,6 @@ class WaylandWindowManager: public WindowManager {
 
 public:
 	static WaylandWindowManager* instance();
-
-	[[nodiscard]] UntypedObjectModel* workspaces() const override {
-		return &WorkspaceManager::instance()->mWorkspaces;
-	}
-
-	[[nodiscard]] UntypedObjectModel* workspaceGroups() const override {
-		return &WorkspaceManager::instance()->mWorkspaceGroups;
-	}
 };
 
 } // namespace qs::wm::wayland

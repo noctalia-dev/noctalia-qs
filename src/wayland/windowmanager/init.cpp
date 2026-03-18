@@ -1,4 +1,6 @@
+#include <qcontainerfwd.h>
 #include <qguiapplication.h>
+#include <qlist.h>
 
 #include "../../core/plugin.hpp"
 

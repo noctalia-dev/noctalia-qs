@@ -68,6 +68,8 @@ public:
 	explicit ProxyWindowBase(QObject* parent = nullptr);
 	~ProxyWindowBase() override;
 
+	static ProxyWindowBase* forObject(QObject* obj);
+
 	ProxyWindowBase(ProxyWindowBase&) = delete;
 	ProxyWindowBase(ProxyWindowBase&&) = delete;
 	void operator=(ProxyWindowBase&) = delete;

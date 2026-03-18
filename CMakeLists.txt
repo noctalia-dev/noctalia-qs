@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(QS_BUILD_OPTIONS "")
 
+# should be changed for forks
+set(CRASHREPORT_URL "https://github.com/noctalia-dev/noctalia-qs/issues/new" CACHE STRING "Bugreport URL")
+
 function(boption VAR NAME DEFAULT)
 	cmake_parse_arguments(PARSE_ARGV 3 arg "" "REQUIRES" "")
 
@@ -48,7 +51,7 @@ boption(FRAME_POINTERS "Keep Frame Pointers (dev)" ${ASAN})
 if (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
 	boption(USE_JEMALLOC "Use jemalloc" OFF)
 else()
-	boption(CRASH_REPORTER "Crash Handling" OFF)
+	boption(CRASH_HANDLER "Crash Handling" OFF)
 	boption(USE_JEMALLOC "Use jemalloc" ON)
 endif()
 boption(SOCKETS "Unix Sockets" ON)

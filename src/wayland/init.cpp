@@ -5,12 +5,12 @@
 #include <qtenvironmentvariables.h>
 
 #include "../core/plugin.hpp"
-#include "safe_dispatch.hpp"
 
 #ifdef QS_WAYLAND_WLR_LAYERSHELL
 #include "wlr_layershell/wlr_layershell.hpp"
 #endif
 
+void installWlProxySafeDeref(); // NOLINT(misc-use-internal-linkage)
 void installPlatformMenuHook(); // NOLINT(misc-use-internal-linkage)
 void installPopupPositioner();  // NOLINT(misc-use-internal-linkage)
 
@@ -34,7 +34,7 @@ class WaylandPlugin: public QsEnginePlugin {
 	}
 
 	void init() override {
-		qs::wayland::installWaylandSafeDispatch();
+		installWlProxySafeDeref();
 		installPlatformMenuHook();
 		installPopupPositioner();
 	}
