@@ -75,7 +75,7 @@ void NMConnectionSettings::updateSettings() {
 			emit this->loaded();
 			this->mLoaded = true;
 		}
-		delete call;
+		call->deleteLater();
 	};
 
 	QObject::connect(call, &QDBusPendingCallWatcher::finished, this, responseCallback);
@@ -92,7 +92,7 @@ void NMConnectionSettings::forget() {
 			qCWarning(logNetworkManager)
 			    << "Failed to forget" << this->path() << ":" << reply.error().message();
 		}
-		delete call;
+		call->deleteLater();
 	};
 
 	QObject::connect(call, &QDBusPendingCallWatcher::finished, this, responseCallback);

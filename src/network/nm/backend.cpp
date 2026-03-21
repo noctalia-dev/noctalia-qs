@@ -84,7 +84,7 @@ void NetworkManager::registerDevices() {
 			}
 		}
 
-		delete call;
+		call->deleteLater();
 	};
 
 	QObject::connect(call, &QDBusPendingCallWatcher::finished, this, responseCallback);
@@ -157,6 +157,7 @@ void NetworkManager::registerFrontendDevice(NMDeviceType::Enum type, NMDevice* d
 			case NM80211Mode::Ap: return WifiDeviceMode::AccessPoint;
 			case NM80211Mode::Mesh: return WifiDeviceMode::Mesh;
 			}
+			Q_UNREACHABLE();
 		};
 		// clang-format off
 		frontendWifiDev->bindableMode().setBinding(translateMode);
@@ -179,6 +180,7 @@ void NetworkManager::registerFrontendDevice(NMDeviceType::Enum type, NMDevice* d
 		case 100: return DeviceConnectionState::Connected;
 		case 110 ... 120: return DeviceConnectionState::Disconnecting;
 		}
+		Q_UNREACHABLE();
 	};
 	// clang-format off
 	frontendDev->bindableName().setBinding([dev]() { return dev->interface(); });
@@ -234,7 +236,7 @@ void NetworkManager::activateConnection(
 		if (reply.isError()) {
 			qCWarning(logNetworkManager) << "Failed to activate connection:" << reply.error().message();
 		}
-		delete call;
+		call->deleteLater();
 	};
 	QObject::connect(call, &QDBusPendingCallWatcher::finished, this, responseCallback);
 }
@@ -254,7 +256,7 @@ void NetworkManager::addAndActivateConnection(
 			qCWarning(logNetworkManager)
 			    << "Failed to add and activate connection:" << reply.error().message();
 		}
-		delete call;
+		call->deleteLater();
 	};
 	QObject::connect(call, &QDBusPendingCallWatcher::finished, this, responseCallback);
 }

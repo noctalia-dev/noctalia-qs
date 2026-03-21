@@ -111,6 +111,7 @@ bool securityIsValid(
 		break;
 	case WifiSecurityType::Leap:
 		if (adhoc) return false;
+		[[fallthrough]];
 	case WifiSecurityType::StaticWep:
 		if (!(apFlags & NM80211ApFlags::Privacy)) return false;
 		if (apWpa || apRsn) {
