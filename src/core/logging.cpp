@@ -237,11 +237,6 @@ void LogManager::messageHandler(
 }
 
 void LogManager::filterCategory(QLoggingCategory* category) {
-	// setEnabled() can re-enter this filter (Qt 6), skip nested calls to avoid stack overflow.
-	static thread_local bool inFilterCategory = false;
-	if (inFilterCategory) return;
-	inFilterCategory = true;
-
 	auto* instance = LogManager::instance();
 
 	auto categoryName = QLatin1StringView(category->categoryName());
@@ -282,8 +277,6 @@ void LogManager::filterCategory(QLoggingCategory* category) {
 	}
 
 	instance->allFilters.insert(categoryName, filter);
-
-	inFilterCategory = false;
 }
 
 LogManager* LogManager::instance() {
