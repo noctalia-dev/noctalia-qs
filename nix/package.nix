@@ -82,8 +82,7 @@ stdenv.mkDerivation {
     (lib.cmakeFeature "GIT_REVISION" gitRev)
   ];
 
-  cmakeBuildType = "RelWithDebInfo";
-  separateDebugInfo = true;
+  cmakeBuildType = "Release";
 
   meta = {
     homepage = "https://github.com/noctalia-dev/noctalia-qs";
