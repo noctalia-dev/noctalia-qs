@@ -25,8 +25,34 @@
 namespace qs::niri::ipc {
 
 namespace {
+
 QS_LOGGING_CATEGORY(logNiriIpc, "quickshell.niri.ipc", QtWarningMsg);
 QS_LOGGING_CATEGORY(logNiriIpcEvents, "quickshell.niri.ipc.events", QtWarningMsg);
+
+// diffUpdate inserts without removing the prior row; reorder after sort avoids duplicate model rows.
+void reorderNiriWorkspaceModel(ObjectModel<NiriWorkspace>& model, const QList<NiriWorkspace*>& sorted) {
+	QList<NiriWorkspace*> order;
+	order.reserve(sorted.size());
+	for (auto* w: sorted) {
+		if (!order.contains(w)) order.append(w);
+	}
+
+	auto& list = model.valueList();
+	for (qsizetype i = 0; i < list.length();) {
+		auto* o = list.at(i);
+		if (!order.contains(o) || list.indexOf(o) != i) model.removeAt(i);
+		else i++;
+	}
+
+	for (qsizetype t = 0; t < order.length(); ++t) {
+		auto* w = order.at(t);
+		auto c = list.indexOf(w);
+		if (c < 0 || c == t) continue;
+		model.removeAt(c);
+		model.insertObject(w, t);
+	}
+}
+
 } // namespace
 
 void NiriIpcEvent::set(const QString& type, const QJsonObject& data) {
@@ -598,7 +624,7 @@ void NiriIpc::updateWorkspacesFromArray(const QJsonArray& workspacesArray) {
 		}
 		return a->bindableIdx().value() < b->bindableIdx().value();
 	});
-	this->mWorkspaces.diffUpdate(sortedList);
+	reorderNiriWorkspaceModel(this->mWorkspaces, sortedList);
 
 	emit this->workspacesUpdated();
 }
