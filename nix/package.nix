@@ -23,6 +23,7 @@
   libunwind,
   version,
   gitRev,
+  storeDir ? builtins.storeDir,
 }:
 stdenv.mkDerivation {
   pname = "quickshell";
@@ -80,6 +81,8 @@ stdenv.mkDerivation {
     (lib.cmakeBool "CRASH_HANDLER" true)
     (lib.cmakeFeature "INSTALL_QML_PREFIX" qt6.qtbase.qtQmlPrefix)
     (lib.cmakeFeature "GIT_REVISION" gitRev)
+    (lib.cmakeBool "NIX_STORE_DIR_SKIP_WATCH" true)
+    (lib.cmakeFeature "NIX_STORE_DIR" storeDir)
   ];
 
   cmakeBuildType = "Release";
