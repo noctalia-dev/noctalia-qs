@@ -72,12 +72,6 @@ NiriIpc::NiriIpc() {
 		return;
 	}
 
-	this->workspaceRefreshTimer.setInterval(50);
-	this->workspaceRefreshTimer.setSingleShot(true);
-	QObject::connect(&this->workspaceRefreshTimer, &QTimer::timeout, this, [this]() {
-		this->refreshWorkspaces();
-	});
-
 	// clang-format off
 	QObject::connect(&this->eventSocket, &QLocalSocket::errorOccurred, this, &NiriIpc::eventSocketError);
 	QObject::connect(&this->eventSocket, &QLocalSocket::stateChanged, this, &NiriIpc::eventSocketStateChanged);
@@ -196,8 +190,8 @@ void NiriIpc::handleWorkspaceActivated(const QJsonObject& data) {
 
 	auto* activated = this->findWorkspaceById(workspaceId);
 	if (!activated) {
-		// Unknown workspace, do a full refresh
-		this->workspaceRefreshTimer.start();
+		// Unknown workspace — same idea as Hyprland falling back to j/workspaces
+		this->refreshWorkspaces();
 		return;
 	}
 
@@ -221,8 +215,6 @@ void NiriIpc::handleWorkspaceActivated(const QJsonObject& data) {
 	Qt::endPropertyUpdateGroup();
 
 	emit this->workspacesUpdated();
-	// Also refresh to catch any other state changes
-	this->workspaceRefreshTimer.start();
 }
 
 void NiriIpc::handleWorkspaceActiveWindowChanged(const QJsonObject& data) {
@@ -278,7 +270,6 @@ void NiriIpc::handleWindowOpenedOrChanged(const QJsonObject& data) {
 	}
 
 	emit this->windowsUpdated();
-	this->workspaceRefreshTimer.start();
 }
 
 void NiriIpc::handleWindowClosed(const QJsonObject& data) {
@@ -301,7 +292,6 @@ void NiriIpc::handleWindowClosed(const QJsonObject& data) {
 
 	qCDebug(logNiriIpc) << "Window closed with id" << windowId;
 	emit this->windowsUpdated();
-	this->workspaceRefreshTimer.start();
 }
 
 void NiriIpc::handleWindowsChanged(const QJsonObject& data) {

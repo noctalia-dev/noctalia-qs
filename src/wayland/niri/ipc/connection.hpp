@@ -8,7 +8,6 @@
 #include <qobject.h>
 #include <qproperty.h>
 #include <qqmlintegration.h>
-#include <qtimer.h>
 #include <qtmetamacros.h>
 #include <qtypes.h>
 
@@ -144,8 +143,6 @@ private:
 	bool requestingOutputs = false;
 	bool requestingWorkspaces = false;
 	bool requestingWindows = false;
-
-	QTimer workspaceRefreshTimer;
 
 	ObjectModel<NiriOutput> mOutputs {this};
 	ObjectModel<NiriWorkspace> mWorkspaces {this};
