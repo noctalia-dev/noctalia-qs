@@ -35,7 +35,6 @@ stdenv.mkDerivation {
       ../src
       ../cmake
       ../assets
-      ../bin
       ../CMakeLists.txt
     ];
   };
