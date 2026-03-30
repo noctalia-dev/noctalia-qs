@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(quickshell VERSION "0.0.10" LANGUAGES CXX C)
+project(quickshell VERSION "0.0.11" LANGUAGES CXX C)
 
 set(UNRELEASED_FEATURES)
 
