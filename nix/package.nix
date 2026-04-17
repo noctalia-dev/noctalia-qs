@@ -19,6 +19,7 @@
   pam,
   glib,
   polkit,
+  kdePackages,
   cpptrace,
   libunwind,
   version,
@@ -64,6 +65,7 @@ stdenv.mkDerivation {
     jemalloc
     pam
     pipewire
+    kdePackages.kirigami
     polkit
     glib
     (cpptrace.overrideAttrs (old: {
