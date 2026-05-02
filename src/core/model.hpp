@@ -128,6 +128,21 @@ public:
 		emit this->objectRemovedPost(object, index);
 	}
 
+	void moveAt(qsizetype from, qsizetype to) {
+		if (from == to) return;
+
+		auto intFrom = static_cast<qint32>(from);
+		auto intTo = static_cast<qint32>(to);
+		// When moving forward, destination is interpreted after source removal.
+		auto destination = intFrom < intTo ? intTo + 1 : intTo;
+
+		this->beginMoveRows(QModelIndex(), intFrom, intFrom, QModelIndex(), destination);
+		this->mValuesList.move(intFrom, intTo);
+		this->endMoveRows();
+
+		emit this->valuesChanged();
+	}
+
 	// Assumes only one instance of a specific value
 	void diffUpdate(const QList<T*>& newValues) {
 		for (qsizetype i = 0; i < this->mValuesList.length();) {
@@ -139,10 +154,10 @@ public:
 		for (auto* object: newValues) {
 			if (this->mValuesList.length() == oi || this->mValuesList.at(oi) != object) {
 				// object may already be present further down (reorder case);
-				// drop the old row first so the same pointer is not inserted twice.
+				// move it to keep row identity stable for views/delegates.
 				auto old = this->mValuesList.indexOf(object, oi);
-				if (old != -1) this->removeAt(old);
-				this->insertObject(object, oi);
+				if (old != -1) this->moveAt(old, oi);
+				else this->insertObject(object, oi);
 			}
 
 			oi++;
